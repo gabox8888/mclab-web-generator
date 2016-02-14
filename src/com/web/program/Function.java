@@ -3,13 +3,14 @@ package com.web.program;
 public class Function implements Writable {
 	
 	private String aName;
+	private List<>
 	
 	/**
 	 * 
 	 * @param pName
 	 */
 	public Function(String pName) {
-		this.aName = pName;
+		aName = pName;
 	}
 
 	/**
@@ -17,12 +18,19 @@ public class Function implements Writable {
 	 */
 	@Override
 	public String[] toFile() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		
+		Header test = new Header();
+		test.addRepositoryModule("ExtractFunction");
+		test.addStandardModule("q","Q");
+		test.addRepositoryModule("ExtractVariable");
+		test.addStandardModule("path");
+		for(String s : test.toFile()) {
+			System.out.println(s);
+		}
 
 	}
 
