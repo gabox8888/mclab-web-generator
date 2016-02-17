@@ -1,8 +1,7 @@
 package com.web.program;
 
-public class Params {
+public interface Params extends Comparable<Params> {
 	
-	private String aName;
-	
-
+	public String toString();
+	public String getName();
 }
