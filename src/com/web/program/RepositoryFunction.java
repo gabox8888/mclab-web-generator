@@ -3,7 +3,7 @@ package com.web.program;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RepositoryFunction implements Writable, Function {
+public class RepositoryFunction implements Function {
 	
 	private String aName;
 	private List<Params> aParams;
@@ -15,6 +15,10 @@ public class RepositoryFunction implements Writable, Function {
 	public RepositoryFunction(String pName) {
 		aName = pName;
 		aParams = new ArrayList<Params>();
+	}
+	
+	public String getName() {
+		return aName;
 	}
 	
 	/**
