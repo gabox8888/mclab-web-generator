@@ -8,6 +8,7 @@ public class BusinessFunction implements Function {
 	private String aName;
 	private List<Params> aParams;
 	private Types aType; 
+	private Command aCommand;
 	
 	public enum Types
 	{ANALYSIS,COMPILE};
@@ -17,10 +18,23 @@ public class BusinessFunction implements Function {
 	 * 
 	 * @param pName
 	 */
-	public BusinessFunction(String pName, Types pType) {
+	public BusinessFunction(String pName, Types pType, Command pCommand) {
 		aName = pName;
 		aType = pType;
+		aCommand = pCommand;
 		aParams = new ArrayList<Params>();
+		
+		addParam(new ParamParams("sessionID"));
+		
+		for(String s : aCommand.getArgsParams()) {
+			addParam(new ParamParams(s));
+		}
+		
+		for(String s : aCommand.getFileParams()) {
+			addParam(new ParamParams(s));
+			addParam(new FileParams(s));
+		}
+		
 	}
 	
 	/**
@@ -57,19 +71,15 @@ public class BusinessFunction implements Function {
 		
 		switch (aType) {
 			case ANALYSIS:
-				aLines.add("let pathToFile = userfile_utils.fileInWorkspace(sessionID, filepath);");
-				aLines.add("const command = `java -jar ${config.MCLAB_CORE_JAR_PATH} --json ${pathToFile}`;");
-				aLines.add("child_process.exec(command, function(error, stdout){\n"
-						+ "try {\n"
-						+ "let jsonTree = JSON.parse(stdout);\n"
-						+ "let output = {};\n"
-						+ "tool_usage.extractKinds(jsonTree, output);\n"
-						+ "res.json(output);\n"
-						+ "}\n"
-						+ "catch(err){\n"
-						+ "res.status(400).json({msg: 'Mclab-core failed to do kind analysis on this file. Is this a valid matlab file?'});\n"
-						+ "}\n"
-						+ " });");
+				aLines.add("const command = '" + aCommand.toString() + "';");
+				aLines.add("child_process.exec(command, function(error, stdout) {");
+				aLines.add("\t try {");
+				aLines.add("\t\t let output = JSON.parse(stdout);");
+				aLines.add("\t\t res.json(output);");
+				aLines.add("\t } catch(err) {");
+				aLines.add("\t \t res.status(400).json({msg: 'Mclab-core failed to do " + aName + " analysis on this file. Is this a valid matlab file?'})");
+				aLines.add("\t }");
+				aLines.add("});");
 				break;
 			case COMPILE:
 				
@@ -87,38 +97,19 @@ public class BusinessFunction implements Function {
 		List<String> aLines = new ArrayList<String>();
 		aLines.add(this.declareName());
 		for(String s : this.declareVariables()) {
-			aLines.add(s);
+			aLines.add("\t" + s);
 		}
 		
 		for (String s : this.declareBody()) {
-			aLines.add(s);
+			aLines.add("\t" + s);
 		}
+		
+		aLines.add("}");
+		
 		return aLines.toArray(new String[aLines.size()]);
 	}
 	
 
-	public static void main(String[] args) {
-		
-		Header test = new Header();
-		test.addStandardModule("q","Q");
-		test.addStandardModule("child_process");
-		BusinessFunction ftest = new BusinessFunction("ExtractFunction",Types.ANALYSIS);
-		ftest.addParam(new ParamParams("sessionID"));
-		ftest.addParam(new BodyParams("selection"));
-		ftest.addParam(new BodyParams("newName"));
-		for(String s : test.toFile()) {
-			System.out.println(s);
-		}
-		System.out.println(ftest.declareName());
-		for(String s : ftest.declareVariables()) {
-			System.out.println(s);
-		}
-		
-		for (String s : ftest.declareBody()) {
-			System.out.println(s);
-		}
-
-	}
 
 
 }

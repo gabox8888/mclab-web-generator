@@ -2,87 +2,69 @@ package com.web.program;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
 public class Command {
 	
-	enum CommandTypes 
-	{JAVA,BASH,OTHER}
-	
 	private final String aPath;
-	private final String[] aParsedPath;
-	private final CommandTypes aCommandType; 
+	private final List<String> aParsedPath;
 	private final List<String> aArgs;
-	private final int aFile;
+	private final List<String> aFile;
 	
 	public Command(String pPath) {
 		aPath = pPath;
-		aParsedPath = aPath.split(" ");
+		aParsedPath = new ArrayList<String>(Arrays.asList(aPath.split(" ")));
 		aArgs = new ArrayList<String>();
-		if (aParsedPath[0].equals("java")) {
-			aCommandType = CommandTypes.JAVA;
-		} else {
-			aCommandType = CommandTypes.BASH;
-		}
-		aFile = findFile();
+		aFile = new ArrayList<String>();
 		
-		System.out.println(Arrays.toString(findArgs()));
-		System.out.println(aArgs.toString());
-
+		findArgs();
+		findFile();
+		
 	}
 	
 	public String toString() {
 		
 		StringBuilder aStrBuilder = new StringBuilder();
-		aStrBuilder.append("'");
-		
-		switch (aCommandType) {
-			case JAVA:
-				aStrBuilder.append(" java -jar");
-				aStrBuilder.append(" ${config." + aParsedPath[1]);
-				break;
-			case BASH:
-				break;
-			case OTHER:
-				break;
+		for (String s : aParsedPath) {
+			aStrBuilder.append(s + " ");
 		}
 		
-		return "'"+aParsedPath[0] + aParsedPath[1] + "${config."+ aParsedPath[2] + aParsedPath[3] + "${pathToFile}';";
+		
+		return aStrBuilder.toString();
 	}
 	
-	public int[] findArgs() {
+	private void findArgs() {
 		int k = 0;
-		List<Integer> tArgs = new ArrayList<Integer>();
 		for (String s : aParsedPath) {
-			String[] tempStrings = s.split("-");
+			String[] tempStrings = s.split("@");
 			if (tempStrings.length > 1) {
 				aArgs.add(tempStrings[tempStrings.length-1]);
-				tArgs.add(k);
+				aParsedPath.set(k, tempStrings[tempStrings.length-1]);
 			}
 			k++;
 		}
-		
-		int j = 0;
-		int[] result = new int[tArgs.size()];
-		for (Integer i : tArgs){
-			result[j]  = i.intValue();
-			j++;
-		}
-		
-		return result;
 	}
 	
-	public int findFile() {
+	private void findFile() {
 		int k = 0;
 		for (String s : aParsedPath) {
-			if (s.equals("FILE")){
-				return k;
+			String[] tempStrings = s.split("&");
+			if (tempStrings.length > 1) {
+				aFile.add(tempStrings[tempStrings.length-1]);
+				aParsedPath.set(k,"${pathTo" + tempStrings[tempStrings.length-1] + "}");
 			}
 			k++;
 		}
-		
-		return -1;
+	}
+
+	public List<String> getFileParams () { 
+		return Collections.unmodifiableList(aFile);
+	}
+	
+	public List<String> getArgsParams () { 
+		return Collections.unmodifiableList(aArgs);
 	}
 	
 }

@@ -21,8 +21,12 @@ public class Program implements Writable{
 	public String[] declareExport() {
 		List<String> aLines = new ArrayList<String>();
 		aLines.add("module.export = {");
+		
+		int k = 0;
 		for (Function f: aFunctions) {
-			aLines.add(f.getName() + ",");
+			if (k ==  aFunctions.size() - 2) aLines.add("\t" + f.getName() + ",");
+			else aLines.add("\t" + f.getName());
+			
 		}
 		aLines.add("}");
 		return aLines.toArray(new String[aLines.size()]);

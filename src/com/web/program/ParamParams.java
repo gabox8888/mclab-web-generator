@@ -19,7 +19,6 @@ public class ParamParams implements Params{
 
 	@Override
 	public int compareTo(Params pParams) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
