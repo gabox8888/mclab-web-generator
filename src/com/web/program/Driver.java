@@ -13,6 +13,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.web.program.BusinessFunction.Types;
+import com.web.tools.FormatingTools;
 
 public class Driver {
 
@@ -26,8 +27,17 @@ public class Driver {
 		try {
 
 			Object obj = parser.parse(new FileReader("test.json"));
-
+			
 			JSONObject jsonObject = (JSONObject) obj;
+			
+			Object obj2 = parser.parse(new FileReader("formatingJSON.json"));
+			
+			JSONObject jsonObject2 = (JSONObject) obj2;
+			
+			JSONObject in = (JSONObject) jsonObject2.get("in");
+			JSONObject out = (JSONObject) jsonObject2.get("out");
+			
+			System.out.println(FormatingTools.mapToFormat(in, out, "test"));
 
 			jsonName = (String) jsonObject.get("name");
 			jsonType = (String) jsonObject.get("type");

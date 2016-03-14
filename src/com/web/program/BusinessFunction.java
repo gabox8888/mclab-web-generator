@@ -3,13 +3,15 @@ package com.web.program;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.web.tools.FormatingTools;
+
 public class BusinessFunction implements Function {
 	
 	private String aName;
 	private List<Params> aParams;
 	private Types aType; 
 	private Command aCommand;
-	
+		
 	public enum Types
 	{ANALYSIS,COMPILE};
 	
@@ -19,11 +21,12 @@ public class BusinessFunction implements Function {
 	 * @param pName
 	 */
 	public BusinessFunction(String pName, Types pType, Command pCommand) {
-		aName = pName;
+		
+		aName = FormatingTools.uncapitalizeName(pName);
 		aType = pType;
 		aCommand = pCommand;
 		aParams = new ArrayList<Params>();
-		
+				
 		addParam(new ParamParams("sessionID"));
 		
 		for(String s : aCommand.getArgsParams()) {

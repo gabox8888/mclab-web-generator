@@ -1,0 +1,9 @@
+{
+	"outputType" : "tt",
+	"command": "java -jar ${config.MCLAB_CORE_JAR_PATH} --json &file",
+	"name": "KindAnalyisis",
+	"type": "ANALYSIS",
+	"test" : {
+		"name": "123"
+	}
+}

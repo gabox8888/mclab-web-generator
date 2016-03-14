@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.web.tools.FormatingTools;
+
 
 public class Command {
 	
@@ -12,13 +14,13 @@ public class Command {
 	private final List<String> aParsedPath;
 	private final List<String> aArgs;
 	private final List<String> aFile;
-	
+		
 	public Command(String pPath) {
 		aPath = pPath;
 		aParsedPath = new ArrayList<String>(Arrays.asList(aPath.split(" ")));
 		aArgs = new ArrayList<String>();
 		aFile = new ArrayList<String>();
-		
+				
 		findArgs();
 		findFile();
 		
@@ -53,7 +55,7 @@ public class Command {
 			String[] tempStrings = s.split("&");
 			if (tempStrings.length > 1) {
 				aFile.add(tempStrings[tempStrings.length-1]);
-				aParsedPath.set(k,"${pathTo" + tempStrings[tempStrings.length-1] + "}");
+				aParsedPath.set(k,"${pathTo" + FormatingTools.capitalizeName(tempStrings[tempStrings.length-1]) + "}");
 			}
 			k++;
 		}

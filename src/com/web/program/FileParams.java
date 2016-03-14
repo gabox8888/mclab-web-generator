@@ -1,15 +1,18 @@
 package com.web.program;
 
+import com.web.tools.FormatingTools;
+
 public class FileParams implements Params{
 	
 	private String aName;
-	
+		
 	public FileParams(String pName) {
 		aName = pName;
+		
 	}
 	
 	public String toString() {
-		return "let pathTo" + aName + " = userfile_utils.fileInWorkspace(sessionID, " + aName + ");";
+		return "let pathTo" + FormatingTools.capitalizeName(aName) + " = userfile_utils.fileInWorkspace(sessionID, " + aName + ");";
 	}
 	
 	@Override
