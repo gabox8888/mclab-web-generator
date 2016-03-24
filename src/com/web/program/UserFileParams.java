@@ -1,15 +1,17 @@
 package com.web.program;
 
-public class BodyParams implements Params{
+public class UserFileParams implements Params{
 	
 	private String aName;
+	private String aFolder;
 	
-	public BodyParams(String pName) {
+	public UserFileParams(String pName, String pFolder) {
 		aName = pName;
+		aFolder = pFolder;
 	}
 	
 	public String toString() {
-		return "const " + aName + " = req.body." + aName + ";";
+		return "const " + aName + " = userfile_utils." + aFolder + "(sessionID);";
 	}
 	
 	@Override
@@ -19,7 +21,6 @@ public class BodyParams implements Params{
 
 	@Override
 	public int compareTo(Params pParams) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 

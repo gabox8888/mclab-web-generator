@@ -51,19 +51,62 @@ public class FormatingTools {
 	
 	@SuppressWarnings("unchecked")
 	public static JSONObject mapToFormat (JSONObject pIn, JSONObject pOut, String pName) {
-		for (Object k : pOut.keySet()) {
-			if (pOut.get(k).toString().indexOf("{") != -1) {
-				pOut.replace(k, mapToFormat(pIn,(JSONObject) pOut.get(k),pName));
+		
+		JSONObject tempObj = (JSONObject) pOut.clone();
+		
+		for (Object k : tempObj.keySet()) {
+			if (tempObj.get(k).toString().indexOf("{") != -1) {
+				tempObj.replace(k, mapToFormat(pIn,(JSONObject) tempObj.get(k),pName));
 			} else {
-				pOut.replace(k, pName + "." + findPathToParam(pIn,pOut.get(k).toString()));
+				tempObj.replace(k, pName + "." + findPathToParam(pIn,tempObj.get(k).toString()));
 			}
 		}
-		return pOut;
+		
+		return tempObj;
 	}
 	
-//	public static String[] writeJSON(JSONObject pObject) {
-//		List<String> aLines = new ArrayList<String>();
-//		
-//	}
+	public static List<String> writeJSON(JSONObject pObject, int pTabsNum) {
+		List<String> aLines = new ArrayList<String>();
+		
+		pTabsNum++;
+		
+		String aTabs = "";
+		String aTabsMinus = "";
+				
+		for (int i = 0; i< pTabsNum; i++) {
+			aTabs = aTabs + "\t ";
+		}
+		
+		for (int i = 0; i< pTabsNum-1; i++) {
+			aTabsMinus = aTabsMinus + "\t ";
+		}
+				
+		for (Object k : pObject.keySet()) {
+			if (pObject.get(k).toString().indexOf("{") != -1) {
+				aLines.add(aTabs + k.toString() + ": { ");
+				aLines.addAll(writeJSON((JSONObject)pObject.get(k),pTabsNum));
+				aLines.set(aLines.size()-1, aLines.get(aLines.size() - 1)+ ",");
+			} else {
+				aLines.add(aTabs + k.toString() + ": " + pObject.get(k).toString() + ","); 
+			}
+		}
+		
+		aLines.add(aTabsMinus + "}");
+		
+		return aLines;
+		
+	}
+	
+	public static String removeDescriptor(String pName, String pType) {
+		String[] aParsed = pName.split(pType);
+		String result = null;
+		
+		for(String s : aParsed) {
+			if(!s.equals(pType)) result = s;
+		}
+		
+		return result;
+		
+	}
 
 }

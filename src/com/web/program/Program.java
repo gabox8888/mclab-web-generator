@@ -5,13 +5,23 @@ import java.util.List;
 
 public class Program implements Writable{
 	
+	enum ProgramType {
+		FRONT,BACK
+	}
+	
 	List<Function> aFunctions;
+	ProgramType aType;
 	Header aHeader;
 	
-	public Program() {
+	public Program(ProgramType pType) {
 		aFunctions = new ArrayList<Function>();
-		aHeader = new Header();
-		aHeader.addStandardModule("child_process");
+		aType = pType;
+		aHeader = new Header(aType);
+		
+		if (aType == ProgramType.BACK) {
+			aHeader.addStandardModule("child_process");
+			aHeader.addStandardModule("path");
+		}
 	}
 	
 	public void addFunction(Function pFunction) {

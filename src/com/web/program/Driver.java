@@ -7,13 +7,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.web.program.BusinessFunction.Types;
-import com.web.tools.FormatingTools;
+import com.web.program.Program.ProgramType;
 
 public class Driver {
 
@@ -23,6 +22,11 @@ public class Driver {
 		String jsonName = null;
 		String jsonType = null;
 		String jsonCommand = null;
+		String jsonLanguageName = null;
+		String jsonLanguageExt = null;
+		JSONObject jsonInputFormat = null;
+		JSONObject jsonOutoutFormat = null;
+		JSONObject jsonLanguage = null;
 
 		try {
 
@@ -30,18 +34,18 @@ public class Driver {
 			
 			JSONObject jsonObject = (JSONObject) obj;
 			
-			Object obj2 = parser.parse(new FileReader("formatingJSON.json"));
-			
-			JSONObject jsonObject2 = (JSONObject) obj2;
-			
-			JSONObject in = (JSONObject) jsonObject2.get("in");
-			JSONObject out = (JSONObject) jsonObject2.get("out");
-			
-			System.out.println(FormatingTools.mapToFormat(in, out, "test"));
-
 			jsonName = (String) jsonObject.get("name");
 			jsonType = (String) jsonObject.get("type");
 			jsonCommand = (String) jsonObject.get("command");
+			
+			if (jsonType.equals("COMPILE") || jsonType.equals("FILE")) {
+				jsonLanguage = (JSONObject) jsonObject.get("compileLanguage");
+				jsonLanguageName = (String) jsonLanguage.get("name");
+				jsonLanguageExt = (String) jsonLanguage.get("ext");
+			} else if (jsonType.equals("ANALYSIS")) {
+				jsonInputFormat = (JSONObject) jsonObject.get("inFormat");
+			 	jsonOutoutFormat = (JSONObject) jsonObject.get("outFormat");
+			}
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -51,11 +55,30 @@ public class Driver {
 			e.printStackTrace();
 		}
 		
-		Program aProgram = new Program();
-						
-		Function aFunction = new BusinessFunction(jsonName,Types.valueOf(jsonType),new Command(jsonCommand));
+		Program aProgram = new Program(ProgramType.BACK);
+		Function aBusinessFunction = null;
+		Language aLanguage = null;
+		Types aType = Types.valueOf(jsonType);
 		
-		aProgram.addFunction(aFunction);
+		switch (aType) {
+			case ANALYSIS:
+				Function aFormatFunction = new FormatFunction("extract"+jsonName,jsonInputFormat,jsonOutoutFormat);
+				aBusinessFunction = new BusinessFunction(jsonName,aType,new Command(jsonCommand), aFormatFunction);
+				aProgram.addFunction(aFormatFunction);
+				break;
+			case COMPILE:
+				aLanguage = new Language(jsonLanguageName,jsonLanguageExt);
+				aBusinessFunction = new BusinessFunction(jsonName,aType,new Command(jsonCommand),aLanguage);
+				break;
+			case FILE:
+				aLanguage = new Language(jsonLanguageName,jsonLanguageExt);
+				aBusinessFunction = new BusinessFunction(jsonName,aType,new Command(jsonCommand),aLanguage);
+				break;
+		}
+		
+		System.out.println(((BusinessFunction)aBusinessFunction).getRoute());
+		
+		aProgram.addFunction(aBusinessFunction);
 		
 		BufferedWriter output = null;
         try {
