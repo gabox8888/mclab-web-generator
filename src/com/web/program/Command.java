@@ -43,7 +43,7 @@ public class Command {
 			String[] tempStrings = s.split("@");
 			if (tempStrings.length > 1) {
 				aArgs.add(tempStrings[tempStrings.length-1]);
-				aParsedPath.set(k, tempStrings[tempStrings.length-1]);
+				aParsedPath.set(k, "${" + tempStrings[tempStrings.length-1] + "}");
 			}
 			k++;
 		}

@@ -6,15 +6,15 @@ import java.util.List;
 
 import com.web.program.Program.ProgramType;
 
-public class Header implements Writable {
+public class Header {
 	
-	//Standard set of backend libraries
+	//Standard set of back-end libraries
 	private final String TOOL = "var tool_usage = require(__base + 'app/logic/util/tool_usage');";
 	private final String USER_UTILS = "var userfile_utils = require(__base + 'app/logic/util/userfile_utils');";
 	private final String CONFIG = "var config = require(__base + 'config/config');";
 	private final String SESSION = "var session = require(__base + 'app/logic/util/session_utils');";
 	
-	//Standard set of fronend libraries
+	//Standard set of front-end libraries
 	private final String AT = "import AT from '../constants/AT';";
 	private final String DISPATCHER = "import Dispatcher from '../Dispatcher';";
 	private final String IMMUTABLE = "import Immutable from 'immutable';";
@@ -34,6 +34,11 @@ public class Header implements Writable {
 		
 	}
 	
+	public void addModule(Module pModule) {
+		Includes.add(pModule);
+		Collections.sort(Includes);
+	}
+	
 	public void addRepositoryModule(String pName) {
 		Includes.add(new RepositoryModule(pName));
 		Collections.sort(Includes);
@@ -49,7 +54,6 @@ public class Header implements Writable {
 		Collections.sort(Includes);
 	}
 	
-	@Override
 	public String[] toFile() {
 		List<String> stringList = new ArrayList<String>();
 		switch (aType) {

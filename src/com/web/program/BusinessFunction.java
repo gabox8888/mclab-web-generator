@@ -75,6 +75,10 @@ public class BusinessFunction implements Function {
 				addParam(new FileParams(s));
 			}
 			
+			for(String s : aCommand.getArgsParams()) {
+				addParam(new ArgBodyParams(s));
+			}
+			
 			
 		} else {
 			
@@ -82,11 +86,13 @@ public class BusinessFunction implements Function {
 				addParam(new ParamParams(s));
 				addParam(new FileParams(s));
 			}
+			
+			for(String s : aCommand.getArgsParams()) {
+				addParam(new ParamParams(s));
+			}
 		}
 		
-		for(String s : aCommand.getArgsParams()) {
-			addParam(new ParamParams(s));
-		}
+		
 		
 		
 	}
@@ -236,15 +242,33 @@ public class BusinessFunction implements Function {
 				break;
 			case COMPILE: 
 				aRoute = "app.post('/session/:sessionID/compile/" + FormatingTools.removeDescriptor(aName, "Compile") +
-						 ", compile." + aName + ");";
+						 "', compile." + aName + ");";
 				break;
 			case FILE:
 				aRoute = "app.post('/session/:sessionID/compile/" + FormatingTools.removeDescriptor(aName, "Compile") +
-				 ", compile." + aName + ");";
+				 "', compile." + aName + ");";
 				break;
 		}
 		
 		return aRoute;
+	}
+	
+	public String getEndPoint() {
+		String aEndPoint = null;
+		
+		switch (aType) {
+			case ANALYSIS:
+				aEndPoint = "/session/:sessionID/analysis/" + FormatingTools.removeDescriptor(aName, "Analysis") ;
+				break;
+			case COMPILE: 
+				aEndPoint = "/session/:sessionID/compile/" + FormatingTools.removeDescriptor(aName, "Compile");
+				break;
+			case FILE:
+				aEndPoint = "/session/:sessionID/compile/" + FormatingTools.removeDescriptor(aName, "Compile");
+				break;
+		}
+		
+		return aEndPoint;
 	}
 	
 

@@ -1,10 +1,8 @@
 package com.web.program;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 
 import org.json.simple.JSONObject;
@@ -13,6 +11,7 @@ import org.json.simple.parser.ParseException;
 
 import com.web.program.BusinessFunction.Types;
 import com.web.program.Program.ProgramType;
+import com.web.tools.TextEditor;
 
 public class Driver {
 
@@ -56,49 +55,63 @@ public class Driver {
 		}
 		
 		Program aProgram = new Program(ProgramType.BACK);
+		Program aProgramFront = new Program(ProgramType.FRONT);
+		Command aCommand = new Command(jsonCommand);
 		Function aBusinessFunction = null;
 		Language aLanguage = null;
+		CompileArgSelector aArgSelector = null;
+
+		File mainBackend = null;
+		File compileArgSelector = null;
+		File indexRoute = new File("index.js");
+		
+		TextEditor aCompilePanel = null;
+		
 		Types aType = Types.valueOf(jsonType);
 		
 		switch (aType) {
 			case ANALYSIS:
 				Function aFormatFunction = new FormatFunction("extract"+jsonName,jsonInputFormat,jsonOutoutFormat);
-				aBusinessFunction = new BusinessFunction(jsonName,aType,new Command(jsonCommand), aFormatFunction);
+				aBusinessFunction = new BusinessFunction(jsonName,aType,aCommand, aFormatFunction);
 				aProgram.addFunction(aFormatFunction);
+				
+				mainBackend = new File("analysis.js");
 				break;
 			case COMPILE:
 				aLanguage = new Language(jsonLanguageName,jsonLanguageExt);
-				aBusinessFunction = new BusinessFunction(jsonName,aType,new Command(jsonCommand),aLanguage);
+				aArgSelector = new CompileArgSelector(aCommand, aLanguage);
+				aBusinessFunction = new BusinessFunction(jsonName,aType,aCommand,aLanguage);
+				
+				mainBackend = new File("compile.js");
+				compileArgSelector = new File(aLanguage.getName() + "CompilePanel.react.js");
+				
+				aCompilePanel = new TextEditor(compileArgSelector, aArgSelector,false);
+				aCompilePanel.writeToFile();
 				break;
 			case FILE:
 				aLanguage = new Language(jsonLanguageName,jsonLanguageExt);
-				aBusinessFunction = new BusinessFunction(jsonName,aType,new Command(jsonCommand),aLanguage);
+				aArgSelector = new CompileArgSelector(aCommand, aLanguage);
+				aBusinessFunction = new BusinessFunction(jsonName,aType,aCommand,aLanguage);
+				
+				mainBackend = new File("compile.js");
+				compileArgSelector = new File(aLanguage.getName() + "CompilePanel.react.js");
+
+				aCompilePanel = new TextEditor(compileArgSelector, aArgSelector,false);
+				aCompilePanel.writeToFile();
 				break;
 		}
+				
+		Function aFrontFunction = new FrontEndFunction("begin" + jsonName , aCommand, (BusinessFunction)aBusinessFunction, aLanguage,aType);
+		EndPointProgram aEndPoint = new EndPointProgram((BusinessFunction) aBusinessFunction,aType);
 		
-		System.out.println(((BusinessFunction)aBusinessFunction).getRoute());
-		
+		aProgramFront.addFunction(aFrontFunction);
 		aProgram.addFunction(aBusinessFunction);
-		
-		BufferedWriter output = null;
-        try {
-            File file = new File("example.js");
-            output = new BufferedWriter(new FileWriter(file));
-            for (String s : aProgram.toFile()) {
-    			output.write(s+ "\n");
-    		}
-        } catch ( IOException e ) {
-            e.printStackTrace();
-        } finally {
-            if ( output != null )
-				try {
-					output.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-        }
 
+		TextEditor aMainProgramEditor = new TextEditor(mainBackend, aProgram,true);
+		aMainProgramEditor.writeToFile();
+		
+		TextEditor aIndexEditor = new TextEditor(indexRoute, aEndPoint,true);
+		aIndexEditor.writeToFile();
         
 		
 	}
