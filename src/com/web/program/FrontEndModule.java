@@ -13,7 +13,7 @@ public class FrontEndModule implements Module {
 	}
 	
 	public String toString() {
-		return "import " + aName + "from '" + aFrom + "';"; 
+		return "import " + aName + " from '" + aFrom + "';"; 
 	}
 
 	@Override

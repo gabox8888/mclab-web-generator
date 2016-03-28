@@ -2,7 +2,6 @@ package com.web.program;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import com.web.tools.FormatingTools;
@@ -61,12 +60,12 @@ public class Command {
 		}
 	}
 
-	public List<String> getFileParams () { 
-		return Collections.unmodifiableList(aFile);
+	public String[] getFileParams () { 
+		return aFile.toArray(new String[aFile.size()]);
 	}
 	
-	public List<String> getArgsParams () { 
-		return Collections.unmodifiableList(aArgs);
+	public String[] getArgsParams () { 
+		return aArgs.toArray(new String[aArgs.size()]);
 	}
 	
 }

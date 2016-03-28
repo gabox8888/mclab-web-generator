@@ -11,6 +11,7 @@ public class CompileArgSelector implements Writable {
 	private Language aLanguage;
 	private Header aHeader;
 	private List<CompileArg> aArgs;
+	private String aName;
 	
 	public CompileArgSelector (Command pCommand, Language pLanguage) {
 		aCommand = pCommand;
@@ -20,9 +21,15 @@ public class CompileArgSelector implements Writable {
 		aHeader.addModule(new FrontEndModule("DropdownSelect","./DropdownSelect.react"));
 		aHeader.addModule(new FrontEndModule("{ DropdownButton, Input, MenuItem }","react-bootstrap"));
 		
+		aName = aLanguage.getName() + "CompileArgumentSelector";
+		
 		for (String s : aCommand.getArgsParams()) {
 			aArgs.add(new CompileArg(s,aLanguage.getName(),aCommand));
 		}
+	}
+	
+	public String getName() {
+		return aName;
 	}
 
 	@Override
@@ -33,7 +40,7 @@ public class CompileArgSelector implements Writable {
 		}
 
 		aLines.add("const { PropTypes, Component } = React;");
-		aLines.add("const " + aLanguage.getName() + "CompileArgumentSelector = (props) => {");
+		aLines.add("const " + aName + " = (props) => {");
 		
 		aLines.add("\treturn (");
 		

@@ -9,14 +9,18 @@ public class Program implements Writable{
 		FRONT,BACK
 	}
 	
-	List<Function> aFunctions;
-	ProgramType aType;
-	Header aHeader;
+	private List<Function> aFunctions;
+	private ProgramType aType;
+	private Header aHeader;
+	private String aName;
+	private Function aMainFunction;
 	
-	public Program(ProgramType pType) {
+	public Program(String pName, ProgramType pType) {
 		aFunctions = new ArrayList<Function>();
 		aType = pType;
 		aHeader = new Header(aType);
+		aName = pName;
+		aMainFunction = null;
 		
 		if (aType == ProgramType.BACK) {
 			aHeader.addStandardModule("child_process");
@@ -24,8 +28,21 @@ public class Program implements Writable{
 		}
 	}
 	
+	public String getName() {
+		return aName;
+	}
+	
 	public void addFunction(Function pFunction) {
 		aFunctions.add(pFunction);
+	}
+	
+	public void addMainFunction(Function pFunction) {
+		aMainFunction = pFunction;
+		addFunction(pFunction);
+	}
+	
+	public Function getMainFunction() {
+		return aMainFunction;
 	}
 	
 	public String[] declareExport() {

@@ -108,5 +108,31 @@ public class FormatingTools {
 		return result;
 		
 	}
+	
+	public static String parseByCapitals(String pName) {
+		String[] aParsed = pName.split("(?<=.)(?=\\p{Lu})");
+		return aParsed[aParsed.length -1];
+	}
+	
+	public static String namifyArg(String pName) {
+		String[] aParsed = pName.split("(?<=.)(?=\\p{Lu})");
+		for (int i = 0; i < aParsed.length; i++) {
+			aParsed[i] = capitalizeName(aParsed[i]);
+		}
+		String result = "";
+		for (String s : aParsed) {
+			result = result + " " + s;
+		}
+		return result;
+	}
+	
+	public static String ififyFiles(String[] pFiles) {
+		String tempResult = "!this.props." + pFiles[0] + "Path && ";
+		for (int i = 1; i < pFiles.length-1; i++) {
+			tempResult = tempResult + "!this.props." + pFiles[i] + "Path && ";
+		}
+		
+		return tempResult + "!this.props." + pFiles[pFiles.length-1] + "Path";
+	}
 
 }

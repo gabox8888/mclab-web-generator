@@ -11,6 +11,7 @@ import org.json.simple.parser.ParseException;
 
 import com.web.program.BusinessFunction.Types;
 import com.web.program.Program.ProgramType;
+import com.web.tools.FormatingTools;
 import com.web.tools.TextEditor;
 
 public class Driver {
@@ -53,39 +54,38 @@ public class Driver {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+		Types aType = Types.valueOf(jsonType);
 		
-		Program aProgram = new Program(ProgramType.BACK);
-		Program aProgramFront = new Program(ProgramType.FRONT);
+		Program aProgram = new Program(aType.name(),ProgramType.BACK);
 		Command aCommand = new Command(jsonCommand);
 		Function aBusinessFunction = null;
 		Language aLanguage = null;
 		CompileArgSelector aArgSelector = null;
 
-		File mainBackend = null;
-		File compileArgSelector = null;
-		File indexRoute = new File("index.js");
+		File fMainBackend = null;
+		File fCompileArgSelector = null;
+		File fIndexRoute = new File("index.js");
+		File fCompileComponent = new File("test.js");
 		
 		TextEditor aCompilePanel = null;
-		
-		Types aType = Types.valueOf(jsonType);
-		
+				
 		switch (aType) {
 			case ANALYSIS:
 				Function aFormatFunction = new FormatFunction("extract"+jsonName,jsonInputFormat,jsonOutoutFormat);
 				aBusinessFunction = new BusinessFunction(jsonName,aType,aCommand, aFormatFunction);
 				aProgram.addFunction(aFormatFunction);
 				
-				mainBackend = new File("analysis.js");
+				fMainBackend = new File("analysis.js");
 				break;
 			case COMPILE:
 				aLanguage = new Language(jsonLanguageName,jsonLanguageExt);
 				aArgSelector = new CompileArgSelector(aCommand, aLanguage);
 				aBusinessFunction = new BusinessFunction(jsonName,aType,aCommand,aLanguage);
 				
-				mainBackend = new File("compile.js");
-				compileArgSelector = new File(aLanguage.getName() + "CompilePanel.react.js");
+				fMainBackend = new File("compile.js");
+				fCompileArgSelector = new File(aLanguage.getName() + "CompileArgumentSelector.react.js");
 				
-				aCompilePanel = new TextEditor(compileArgSelector, aArgSelector,false);
+				aCompilePanel = new TextEditor(fCompileArgSelector, aArgSelector,false);
 				aCompilePanel.writeToFile();
 				break;
 			case FILE:
@@ -93,27 +93,30 @@ public class Driver {
 				aArgSelector = new CompileArgSelector(aCommand, aLanguage);
 				aBusinessFunction = new BusinessFunction(jsonName,aType,aCommand,aLanguage);
 				
-				mainBackend = new File("compile.js");
-				compileArgSelector = new File(aLanguage.getName() + "CompilePanel.react.js");
+				fMainBackend = new File("compile.js");
+				fCompileArgSelector = new File(aLanguage.getName() + "CompileArgumentSelector.react.js");
 
-				aCompilePanel = new TextEditor(compileArgSelector, aArgSelector,false);
+				aCompilePanel = new TextEditor(fCompileArgSelector, aArgSelector,false);
 				aCompilePanel.writeToFile();
 				break;
 		}
 				
 		Function aFrontFunction = new FrontEndFunction("begin" + jsonName , aCommand, (BusinessFunction)aBusinessFunction, aLanguage,aType);
 		EndPointProgram aEndPoint = new EndPointProgram((BusinessFunction) aBusinessFunction,aType);
+		Program aProgramFront = new Program(aLanguage.getName() + "CompileActions",ProgramType.FRONT);
 		
-		aProgramFront.addFunction(aFrontFunction);
+		aProgramFront.addMainFunction(aFrontFunction);
 		aProgram.addFunction(aBusinessFunction);
 
-		TextEditor aMainProgramEditor = new TextEditor(mainBackend, aProgram,true);
-		aMainProgramEditor.writeToFile();
+		TextEditor aMainProgramEditor = new TextEditor(fMainBackend, aProgram,true);
+		//aMainProgramEditor.writeToFile();
 		
-		TextEditor aIndexEditor = new TextEditor(indexRoute, aEndPoint,true);
-		aIndexEditor.writeToFile();
-        
+		TextEditor aIndexEditor = new TextEditor(fIndexRoute, aEndPoint,true);
+		//aIndexEditor.writeToFile();
 		
+		CompilePanel aTest = new CompilePanel(aLanguage,aCommand,aArgSelector,aProgramFront);
+		TextEditor aTestEditor = new TextEditor(fCompileComponent, aTest,false);
+		aTestEditor.writeToFile();
 	}
 
 }
