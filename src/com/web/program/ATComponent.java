@@ -34,22 +34,22 @@ public class ATComponent implements Writable {
 		
 		switch (pPart){
 			case JSON:
-				aLines.add(aName + ": {");
+				aLines.add("\t" + aName + ": {");
 				if (aType != Types.ANALYSIS) {
-					aLines.add("OPEN_PANEL: '',");
-				    aLines.add("ADD_ARGUMENT: '',");
-				    aLines.add("DELETE_ARGUMENT: '',");
-				    aLines.add("EDIT_ARGUMENT: '',");
+					aLines.add("\t\tOPEN_PANEL: '',");
+				    aLines.add("\t\tADD_ARGUMENT: '',");
+				    aLines.add("\t\tDELETE_ARGUMENT: '',");
+				    aLines.add("\t\tEDIT_ARGUMENT: '',");
 				    for (String s : aCommand.getFileParams()) {
-				    	aLines.add("CONFIRM_" + generateName(s) + ": '',");
-					    aLines.add("OPEN_" + generateName(s) + "_SELECTION_MODE: '',");
-					    aLines.add("CLOSE_" + generateName(s) + "_SELECTION_MODE: ''");
+				    	aLines.add("\t\tCONFIRM_" + generateName(s) + ": '',");
+					    aLines.add("\t\tOPEN_" + generateName(s) + "_SELECTION_MODE: '',");
+					    aLines.add("\t\tCLOSE_" + generateName(s) + "_SELECTION_MODE: ''");
 				    }
 				    
 				} else {
-					aLines.add("OPEN_PANEL: '',");
+					aLines.add("\t\tOPEN_PANEL: '',");
 				}
-				aLines.add("}");
+				aLines.add("\t},");
 				break;
 			default:
 				break;	

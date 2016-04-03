@@ -47,7 +47,11 @@ public class Program implements Writable{
 	
 	public String[] declareExport() {
 		List<String> aLines = new ArrayList<String>();
-		aLines.add("module.export = {");
+		if (aType == ProgramType.BACK) {
+			aLines.add("module.export = {");
+		} else {
+			aLines.add("module default{");
+		}
 		
 		int k = 0;
 		for (Function f: aFunctions) {

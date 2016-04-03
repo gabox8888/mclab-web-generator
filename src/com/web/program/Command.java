@@ -51,7 +51,7 @@ public class Command {
 	private void findFile() {
 		int k = 0;
 		for (String s : aParsedPath) {
-			String[] tempStrings = s.split("&");
+			String[] tempStrings = s.split("%");
 			if (tempStrings.length > 1) {
 				aFile.add(tempStrings[tempStrings.length-1]);
 				aParsedPath.set(k,"${pathTo" + FormatingTools.capitalizeName(tempStrings[tempStrings.length-1]) + "}");

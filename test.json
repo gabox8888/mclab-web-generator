@@ -1,9 +1,34 @@
 {
-	"outputType" : "tt",
-	"command": "java -jar ${config.MCLAB_CORE_JAR_PATH} --json &file",
-	"name": "KindAnalyisis",
-	"type": "ANALYSIS",
-	"test" : {
-		"name": "123"
+	"outputType" : "ZIP",
+	"command": "${config.MCVM_PATH} %mainFile @intCount @doubleNum*@test@test2 %secondaryFile %aspectFile",
+	"name": "CompileMcMvm",
+	"type": "FILE",
+	"inFormat" : {
+		"name": {
+			"name" : "name",
+			"position" : {
+				"start" : {
+					"line" : "startRow",
+					"column" : "startColumn"
+				},
+				"end" : {
+					"line" : "endRow",
+					"column" : "endColumn"
+				}
+			}
+		}
+	},
+	"outFormat" : {
+		"name" : "name",
+		"position" : {
+			"startRow" : "startRow",
+			"startColumn" : "startColumn",
+			"endRow": "endRow",
+			"endColumn" : "endColumn"
+		}
+	},
+	"compileLanguage" : {
+		"name" : "McMvm",
+		"ext" : "generated.js"
 	}
 }
