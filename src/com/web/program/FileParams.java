@@ -7,12 +7,12 @@ public class FileParams implements Params{
 	private String aName;
 		
 	public FileParams(String pName) {
-		aName = pName;
+		aName = FormatingTools.capitalizeName(pName);
 		
 	}
 	
 	public String toString() {
-		return "let pathTo" + FormatingTools.capitalizeName(aName) + " = userfile_utils.fileInWorkspace(sessionID, " + aName + ");";
+		return "const pathTo" + aName + " = userfile_utils.fileInWorkspace(sessionID, " + aName + ");";
 	}
 	
 	@Override

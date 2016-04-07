@@ -9,9 +9,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.web.program.BusinessFunction.Types;
+import com.web.program.Types;
 import com.web.program.Program.ProgramType;
-import com.web.tools.FormatingTools;
 import com.web.tools.TextEditor;
 
 public class Driver {
@@ -43,7 +42,7 @@ public class Driver {
 			jsonBasePath = (String) jsonObject.get("basePath");
 			
 			if (jsonBasePath != null) {
-				BASE_PATH = jsonBasePath;
+				BASE_PATH = jsonBasePath + "/";
 			} else {
 				BASE_PATH = "./TEST/";
 			}
@@ -67,17 +66,27 @@ public class Driver {
 		Types aType = Types.valueOf(jsonType);
 		
 		Program aProgram = new Program(aType.name(),ProgramType.BACK);
+		Program aProgramFront = null;
 		Command aCommand = new Command(jsonCommand);
 		Function aBusinessFunction = null;
 		Language aLanguage = null;
 		CompileArgSelector aArgSelector = null;
+		CompileConfigStore aConfigStore = null;
+		CompilePanel aCompilePanel = null;
+		SidePanel aSidePanel = null;
+		CompilePanelContainer aCompilePanelContainer = null;
+		UserFiles aUserFiles = null;
 
 		File fMainBackend = null;
+		File fUserFiles = null;
 		File fMainFrontend = null;
 		File fCompileArgSelector = null;
 		File fCompilePanel = null;
 		File fCompileStore = null;
+		File fActivePanelStore = null;
 		File fATComponent = null;
+		File fPanelKeys = null;
+		File fSidePanel = null;
 		File fCompilePanelContainer = null;
 		File fTopNav = null;
 		File fIndexRoute = new File(BASE_PATH + "mcnode/app/route/index.js");
@@ -85,24 +94,61 @@ public class Driver {
 		switch (aType) {
 			case ANALYSIS:
 				Function aFormatFunction = new FormatFunction("extract"+jsonName,jsonInputFormat,jsonOutoutFormat);
+				aProgramFront = new Program(jsonName + "Actions",ProgramType.FRONT);
 				aBusinessFunction = new BusinessFunction(jsonName,aType,aCommand, aFormatFunction);
 				aProgram.addFunction(aFormatFunction);
 				
 				fMainBackend = new File(BASE_PATH + "mcnode/app/logic/tools/analysis.js");
 				break;
-			case COMPILE:
+			default:
 				aLanguage = new Language(jsonLanguageName,jsonLanguageExt);
+				aConfigStore = new CompileConfigStore(aLanguage.getName(),aCommand);
+				aProgramFront = new Program(aLanguage.getName() + "CompileActions",ProgramType.FRONT,aConfigStore);
+				aCompilePanel = new CompilePanel(aLanguage,aCommand,aArgSelector,aProgramFront);
 				aArgSelector = new CompileArgSelector(aCommand, aLanguage);
 				aBusinessFunction = new BusinessFunction(jsonName,aType,aCommand,aLanguage);
+				aCompilePanelContainer = new CompilePanelContainer(aCommand,aLanguage.getName(), aConfigStore.getName(),aCompilePanel.getName());
+				aSidePanel = new SidePanel(aCompilePanelContainer,aCompilePanel);
+				aUserFiles = new UserFiles(aLanguage);
+				
+				Function aOpenPanelFunction = new OpenPanelFunction(aLanguage.getName());
+				aProgramFront.addFunction(aOpenPanelFunction);
+
 				
 				fMainBackend = new File(BASE_PATH + "mcnode/app/logic/tools/compile.js");
-				break;
-			case FILE:
-				aLanguage = new Language(jsonLanguageName,jsonLanguageExt);
-				aArgSelector = new CompileArgSelector(aCommand, aLanguage);
-				aBusinessFunction = new BusinessFunction(jsonName,aType,aCommand,aLanguage);
+				fCompileArgSelector = new File(BASE_PATH + "js/" + aArgSelector.getName()+ ".react.js");
+				fCompilePanel = new File(BASE_PATH + "js/" + aCompilePanel.getName() + ".react.js");
+				fCompileStore = new File(BASE_PATH + "js/stores/" + aConfigStore.getName() + ".js");
+				fActivePanelStore = new File(BASE_PATH + "js/stores/ActiveSidePanelStore.js");
+				fPanelKeys = new File(BASE_PATH + "js/constants/SidePanelKeys.js");
+				fSidePanel = new File(BASE_PATH + "js/SidePanel.react.js");
+				fUserFiles = new File(BASE_PATH + "mcnode/app/logic/util/userfile_utils.js");
+				fCompilePanelContainer = new File(BASE_PATH + "js/" + aCompilePanelContainer.getName() + ".react.js");
 				
-				fMainBackend = new File(BASE_PATH + "mcnode/app/logic/tools/compile.js");
+				TextEditor aCompilePanelContainerEditor = new TextEditor(fCompilePanelContainer, aCompilePanelContainer,false);
+				aCompilePanelContainerEditor.writeToFile();
+				
+				TextEditor aArgSelectorEditor = new TextEditor(fCompileArgSelector, aArgSelector,false);
+				aArgSelectorEditor.writeToFile();
+				
+				TextEditor aCompilePanelEditor = new TextEditor(fCompilePanel, aCompilePanel,false);
+				aCompilePanelEditor.writeToFile();
+				
+				TextEditor aPanelKeysEditor = new TextEditor(fPanelKeys, aCompilePanel,true);
+				aPanelKeysEditor.writeToFile();
+				
+				TextEditor aUserFilesEditor = new TextEditor(fUserFiles, aUserFiles,true);
+				aUserFilesEditor.writeToFile();
+				
+				TextEditor aActivePanelEditor = new TextEditor(fActivePanelStore, aCompilePanel,true);
+				aActivePanelEditor.writeToFile();
+				
+				TextEditor aSidePanelEditor = new TextEditor(fSidePanel, aSidePanel,true);
+				aSidePanelEditor.writeToFile();
+				
+				TextEditor aConfigStoreEditor = new TextEditor(fCompileStore, aConfigStore,false);
+				aConfigStoreEditor.writeToFile();
+				
 				break;
 		}
 		
@@ -111,30 +157,22 @@ public class Driver {
 		if (aType != Types.ANALYSIS) {
 			 aATName = aLanguage.getName() + " Compile Panel";
 		} else {
-			 aATName = aLanguage.getName() + " " + aType.name() + " Panel";
+			 aATName = jsonName.toUpperCase();
 		}
-				
+		
+		Function aRequestFunction = new RequestFunction(jsonName,aType,aCommand,aBusinessFunction);
 		Function aFrontFunction = new FrontEndFunction("begin" + jsonName , aCommand, (BusinessFunction)aBusinessFunction, aLanguage,aType);
-		Function aOpenPanelFunction = new OpenPanelFunction(aLanguage.getName());
-		EndPointProgram aEndPoint = new EndPointProgram((BusinessFunction) aBusinessFunction,aType);
-		Program aProgramFront = new Program(aLanguage.getName() + "CompileActions",ProgramType.FRONT);
-		CompilePanel aCompilePanel = new CompilePanel(aLanguage,aCommand,aArgSelector,aProgramFront);
-		CompileConfigStore aConfigStore = new CompileConfigStore(aLanguage.getName(),aCommand);
-		CompilePanelContainer aCompilePanelContainer = new CompilePanelContainer(aCommand,aLanguage.getName(), aConfigStore.getName(),aCompilePanel.getName());
+		EndPointProgram aEndPoint = new EndPointProgram((BusinessFunction) aBusinessFunction,aType); 
 		ATComponent aATComponent = new ATComponent(aATName, aType,aCommand);
 		FrontEndButton aButton = new FrontEndButton(aProgramFront,aType,jsonName);
-				
-		fCompileArgSelector = new File(BASE_PATH + "js/" + aArgSelector.getName()+ ".react.js");
-		fCompilePanel = new File(BASE_PATH + "js/" + aCompilePanel.getName() + ".react.js");
-		fCompileStore = new File(BASE_PATH + "js/stores/" + aConfigStore.getName() + ".js");
-		fMainFrontend = new File(BASE_PATH + "js/actions/" + aProgramFront.getName() + ".js");
-		fATComponent = new File(BASE_PATH + "js/constants/AT.js");
-		fCompilePanelContainer = new File(BASE_PATH + "js/" + aCompilePanelContainer.getName() + ".react.js");
-		fTopNav = new File(BASE_PATH + "js/TopNav.react.js");
 		
 		aProgramFront.addMainFunction(aFrontFunction);
-		aProgramFront.addFunction(aOpenPanelFunction);
 		aProgram.addFunction(aBusinessFunction);
+		aProgram.addFunction(aRequestFunction);
+		
+		fMainFrontend = new File(BASE_PATH + "js/actions/" + aProgramFront.getName() + ".js");
+		fATComponent = new File(BASE_PATH + "js/constants/AT.js");
+		fTopNav = new File(BASE_PATH + "js/TopNav.react.js");
 
 		TextEditor aMainProgramEditor = new TextEditor(fMainBackend, aProgram,true);
 		aMainProgramEditor.writeToFile();
@@ -145,20 +183,8 @@ public class Driver {
 		TextEditor aFrontEditor = new TextEditor(fMainFrontend, aProgramFront,false);
 		aFrontEditor.writeToFile();
 		
-		TextEditor aArgSelectorEditor = new TextEditor(fCompileArgSelector, aArgSelector,false);
-		aArgSelectorEditor.writeToFile();
-		
-		TextEditor aCompilePanelEditor = new TextEditor(fCompilePanel, aCompilePanel,false);
-		aCompilePanelEditor.writeToFile();
-		
-		TextEditor aConfigStoreEditor = new TextEditor(fCompileStore, aConfigStore,false);
-		aConfigStoreEditor.writeToFile();
-		
 		TextEditor aATComponenEditor = new TextEditor(fATComponent, aATComponent,true);
 		aATComponenEditor.writeToFile();
-		
-		TextEditor aCompilePanelContainerEditor = new TextEditor(fCompilePanelContainer, aCompilePanelContainer,false);
-		aCompilePanelContainerEditor.writeToFile();
 		
 		TextEditor aTopNavEditor = new TextEditor(fTopNav, aButton,true);
 		aTopNavEditor.writeToFile();

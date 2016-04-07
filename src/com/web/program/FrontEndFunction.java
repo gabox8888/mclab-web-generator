@@ -3,7 +3,7 @@ package com.web.program;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.web.program.BusinessFunction.Types;
+import com.web.program.Types;
 import com.web.tools.FormatingTools;
 
 public class FrontEndFunction implements Function {
@@ -46,9 +46,9 @@ public class FrontEndFunction implements Function {
 		List<String> aLines = new ArrayList<String>();
 		if (aType != Types.ANALYSIS) {
 			for (String s : aCommand.getFileParams()) {
-				aLines.add("const " + s + " = " + aLanguage.getName() + "CompileConfigStore.get" + FormatingTools.capitalizeName(s) + "Path();" );
+				aLines.add("const " + s + " = " + aLanguage.getName().toUpperCase() + "CompileConfigStore.get" + FormatingTools.capitalizeName(s) + "Path();" );
 			}
-			aLines.add("const arg = " + aLanguage.getName() + "CompileConfigStore.getArgumentList().get(0, null);");
+			aLines.add("const arg = " + aLanguage.getName().toUpperCase() + "CompileConfigStore.getArgumentList().get(0, null);");
 
 		} else {
 			aLines.add("const filePath = OpenFileStore.getFilePath();");
@@ -93,7 +93,7 @@ public class FrontEndFunction implements Function {
 		if (aType != Types.ANALYSIS) {
 			aLines.add("request.post(baseURL + '" + aFunction.getEndPoint() + "')");
 		} else {
-			aLines.add("request.get(baseURL + '" + aFunction.getEndPoint() + "' + filePath.substring(10))");
+			aLines.add("request.get(baseURL + '" + aFunction.getEndPoint() + "/' + filePath.substring(10))");
 		}
 		
 		aLines.add("\t.set({'SessionID': sessionID})");
@@ -114,7 +114,7 @@ public class FrontEndFunction implements Function {
 		aLines.add("\t\t\t\t\t{ \"If you believe this is a bug please open an issue \" }");
 		aLines.add("\t\t\t\t\t<a href=\"https://github.com/Sable/McLab-Web/issues\">here</a>");
 		aLines.add("\t\t\t\t\t{ \"or send us an email.\" }");
-		aLines.add("\t\t\t\t\t<div>");
+		aLines.add("\t\t\t\t\t</div>");
 		aLines.add("\t\t\t\t);");
 		aLines.add("\t\t\t}");
 		aLines.add("\t\t} else {");

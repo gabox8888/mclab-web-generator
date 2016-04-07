@@ -28,7 +28,7 @@ public class OpenPanelFunction implements Function {
 	public String[] declareBody() {
 		List<String> aLines = new ArrayList<String>();
 		aLines.add("\tDispatcher.dispatch({");
-		aLines.add("\t\taction: AT." + aLanguage + "_COMPILE_PANEL.OPEN_PANEL");
+		aLines.add("\t\taction: AT." + aLanguage.toUpperCase() + "_COMPILE_PANEL.OPEN_PANEL");
 		aLines.add("\t});");
 		return aLines.toArray(new String[aLines.size()]);
 	}

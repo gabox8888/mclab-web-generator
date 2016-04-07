@@ -22,10 +22,10 @@ public class CompilePanelContainer implements Writable {
 		aPanel = pPanel;
 		aHeader = new Header(ProgramType.FRONT);
 		aHeader.addModule(new FrontEndModule("{Container}","flux/utils"));
-		aHeader.addModule(new FrontEndModule(aConfigStore,"./stores" + aConfigStore));
+		aHeader.addModule(new FrontEndModule(aConfigStore,"./stores/" + aConfigStore));
 		aHeader.addModule(new FrontEndModule(aPanel,"./" + aPanel + ".react"));
 		
-		aName = aLanguage + "CompilePanelConatiner";
+		aName = aLanguage + "CompilePanelContainer";
 	}
 	
 	public String getName() {
@@ -35,6 +35,10 @@ public class CompilePanelContainer implements Writable {
 	@Override
 	public String[] toFile() {
 		List<String> aLines = new ArrayList<String>();
+		
+		for (String s : aHeader.toFile()) {
+			aLines.add(s);
+		}
 		
 		aLines.add("const { Component } = React;");
 		aLines.add("class " + aName + " extends Component {");

@@ -14,6 +14,7 @@ public class Program implements Writable{
 	private Header aHeader;
 	private String aName;
 	private Function aMainFunction;
+	private CompileConfigStore aStore;
 	
 	public Program(String pName, ProgramType pType) {
 		aFunctions = new ArrayList<Function>();
@@ -25,6 +26,37 @@ public class Program implements Writable{
 		if (aType == ProgramType.BACK) {
 			aHeader.addStandardModule("child_process");
 			aHeader.addStandardModule("path");
+		} else {
+			aHeader.addModule(new FrontEndModule("Dispatcher","../Dispatcher"));
+			aHeader.addModule(new FrontEndModule("AT","../constants/AT"));
+			aHeader.addModule(new FrontEndModule("OpenFileStore","../stores/OpenFileStore"));
+			aHeader.addModule(new FrontEndModule("TerminalActions","./TerminalActions"));
+			aHeader.addModule(new FrontEndModule("OnLoadActions","./OnLoadActions"));
+			aHeader.addModule(new FrontEndModule("request","superagent"));
+		}
+	}
+	
+	public Program(String pName, ProgramType pType, CompileConfigStore pStore) {
+		aFunctions = new ArrayList<Function>();
+		aType = pType;
+		aHeader = new Header(aType);
+		aName = pName;
+		aStore = pStore;
+		aMainFunction = null;
+		
+		if (aType == ProgramType.BACK) {
+			aHeader.addStandardModule("child_process");
+			aHeader.addStandardModule("path");
+		} else {
+			aHeader.addModule(new FrontEndModule("Dispatcher","../Dispatcher"));
+			aHeader.addModule(new FrontEndModule("AT","../constants/AT"));
+			aHeader.addModule(new FrontEndModule(aStore.getName(),"../stores/" + aStore.getName()));
+			aHeader.addModule(new FrontEndModule("OpenFileStore","../stores/OpenFileStore"));
+			aHeader.addModule(new FrontEndModule("TerminalActions","./TerminalActions"));
+			aHeader.addModule(new FrontEndModule("request","superagent"));
+			aHeader.addModule(new FrontEndModule("OnLoadActions","./OnLoadActions"));
+
+
 		}
 	}
 	
@@ -50,7 +82,7 @@ public class Program implements Writable{
 		if (aType == ProgramType.BACK) {
 			aLines.add("module.export = {");
 		} else {
-			aLines.add("module default{");
+			aLines.add("export default{");
 		}
 		
 		int k = 0;

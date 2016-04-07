@@ -22,7 +22,10 @@ public class CompilePanel implements Writable {
 		aArgSelector = pArgSelector;
 		aActionProgram = pActionProgram;
 		aHeader = new Header(ProgramType.FRONT);
-		aHeader.addModule(new FrontEndModule("SidePanelBase","'./SidePanelBase.react'"));
+		aHeader.addModule(new FrontEndModule("classnames","classnames"));
+		aHeader.addModule(new FrontEndModule("SidePanelBase","./SidePanelBase.react"));
+		aHeader.addModule(new FrontEndModule("Dispatcher","./Dispatcher"));
+		aHeader.addModule(new FrontEndModule("AT","./constants/AT"));
 		aHeader.addModule(new FrontEndModule(aActionProgram.getName(),"./actions/" + aActionProgram.getName() ));
 		aHeader.addModule(new FrontEndModule(aArgSelector.getName(),"./" + aArgSelector.getName() + ".react"));
 		aHeader.addModule(new FrontEndModule("{ DropdownButton, MenuItem }","react-bootstrap"));
@@ -65,7 +68,7 @@ public class CompilePanel implements Writable {
 		aLines.add("\t}");	     
 		
 		aLines.add("\t_getCompileButton() {");
-		aLines.add("\t\tif (" + FormatingTools.ififyFiles(aCommand.getFileParams()) + ") {");
+		aLines.add("\t\tif (!(" + FormatingTools.ififyFiles(aCommand.getFileParams()) + ")) {");
 		aLines.add("\t\t\treturn null");
 		aLines.add("\t\t}");
 		aLines.add("\t\treturn (");
@@ -80,7 +83,7 @@ public class CompilePanel implements Writable {
 		aLines.add("\t}");
 		
 		aLines.add("\t_getArgumentCard() {");
-		aLines.add("\t\tif (" + FormatingTools.ififyFiles(aCommand.getFileParams()) + ") {");
+		aLines.add("\t\tif (!(" + FormatingTools.ififyFiles(aCommand.getFileParams()) + ")) {");
 		aLines.add("\t\t\treturn null");
 		aLines.add("\t\t}");
 		aLines.add("\t\t// This allows for multiple arguments");	    
@@ -153,7 +156,26 @@ public class CompilePanel implements Writable {
 
 	@Override
 	public String[] getPartial(PartialParts pPart) {
-		return null;
+		List<String> aLines = new ArrayList<String>();
+
+		switch(pPart) {
+			case EXPORTS:
+				aLines.add("\t" + aLanguage.getName().toUpperCase() + "_COMPILE_PANEL: '',");
+				break;
+			case ACTIVE_SIDE_PANEL:
+				aLines.add("\t\t\tcase AT." + aLanguage.getName().toUpperCase() + "_COMPILE_PANEL.OPEN_PANEL:");
+		        aLines.add("\t\t\t\tthis._activePanel = SidePanelKeys." + aLanguage.getName().toUpperCase() + "_COMPILE_PANEL;"); 
+		        aLines.add("\t\t\t\tthis.__emitChange();");
+		        aLines.add("\t\t\t\tbreak;");
+				break;
+			default:
+				break;
+		}
+		return aLines.toArray(new String[aLines.size()]);
+	}
+	
+	public String getConstant() {
+		return aLanguage.getName().toUpperCase() + "_COMPILE_PANEL";
 	}
 
 }

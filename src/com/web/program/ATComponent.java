@@ -3,7 +3,7 @@ package com.web.program;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.web.program.BusinessFunction.Types;
+import com.web.program.Types;
 
 public class ATComponent implements Writable {
 	

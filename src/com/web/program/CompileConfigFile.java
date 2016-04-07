@@ -30,13 +30,13 @@ public class CompileConfigFile {
 	public String[] declareDispatch() {
 		List<String> aLines = new ArrayList<String>();
 
-		aLines.add("case AT." + aLanguage + "_COMPILE_PANEL.OPEN_" + aName + "_SELECTION_MODE:");
+		aLines.add("case AT." + aLanguage + "_COMPILE_PANEL.OPEN" + aName + "_SELECTION_MODE:");
 		aLines.add("\tthis._" + aArg + "SelectMode = true;");
 		aLines.add("\tbreak;");
-		aLines.add("case AT." + aLanguage + "_COMPILE_PANEL.CLOSE_" + aName + "_SELECTION_MODE:");
+		aLines.add("case AT." + aLanguage + "_COMPILE_PANEL.CLOSE" + aName + "_SELECTION_MODE:");
 		aLines.add("\tthis._" + aArg + "SelectMode = false;");
 		aLines.add("\tbreak;");
-		aLines.add("case AT." + aLanguage + "_COMPILE_PANEL.COMFIRM_" + aName + ":");
+		aLines.add("case AT." + aLanguage + "_COMPILE_PANEL.CONFIRM" + aName + ":");
 		aLines.add("\tif (this._" + aArg  + "SelectMode) {");
 		aLines.add("\t\tthis._" + aArg + "Path = this._unconfirmed" + FormatingTools.capitalizeName(aArg) + "Path;");
 		aLines.add("\t\tthis._unconfirmed" + FormatingTools.capitalizeName(aArg) + "Path = null;");
@@ -60,6 +60,19 @@ public class CompileConfigFile {
 		aLines.add("\treturn this._unconfirmed"+ aCapitalizedArg + "Path;");
 		aLines.add("}");
 		
+		return aLines.toArray(new String[aLines.size()]);
+	}
+	
+	public String[] declareSelectFile() {
+		List<String> aLines = new ArrayList<String>();
+
+		aLines.add("if (this._" + aArg  + "SelectMode) {");
+		aLines.add("\tif (payload.data.type === 'FILE') {");
+		aLines.add("\t\tthis._unconfirmed" + FormatingTools.capitalizeName(aArg) + "Path = payload.data.selection;");
+		aLines.add("\t\tthis.__emitChange();");
+		aLines.add("\t}");
+		aLines.add("}");
+	
 		return aLines.toArray(new String[aLines.size()]);
 	}
 

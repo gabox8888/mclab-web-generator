@@ -21,7 +21,7 @@ public class CompilePanelFile  {
 		aLines.add("\tclassName={classnames(");
 		aLines.add("\t\t\"side-panel-card\",");
 		aLines.add("\t\t\"fortran-compiler-main-file-selector\"");
-		aLines.add("\t}");
+		aLines.add("\t)}");
 		aLines.add(">");
 		aLines.add("\t<div className=\"side-panel-card-header\">");
 		aLines.add("\t\t" + aName);
@@ -38,14 +38,14 @@ public class CompilePanelFile  {
 	public String[] declareFileFunctions() {
 		List<String> aLines = new ArrayList<String>();
 		
-		aLines.add("_get" + aArg + "Section() {");
+		aLines.add("_get" + aArg + "Selection() {");
 		aLines.add("\tif (this.props.unconfirmed" + aArg + "Path) {");
 		aLines.add("\t\treturn (");
 		aLines.add("\t\t\t<div>");
 		aLines.add("\t\t\t\t<div>{this.props.unconfirmed" + aArg + "Path}</div>");
 		aLines.add("\t\t\t\t<a className=\"fortran-compiler-select-main-file\"");
 		aLines.add("\t\t\t\t\tonClick={() => {");
-		aLines.add("\t\t\t\t\t\t\tDispatcher.dispatch({action: AT." + aLanguage + "_COMPILE_PANEL.CONFIRM_" + aName.toUpperCase().replace(" ", "_") + "});");
+		aLines.add("\t\t\t\t\t\t\tDispatcher.dispatch({action: AT." + aLanguage + "_COMPILE_PANEL.CONFIRM" + aName.toUpperCase().replace(" ", "_") + "});");
 		aLines.add("\t\t\t\t\t\t\tDispatcher.dispatch({action: AT.FILE_EXPLORER.CLOSE_SELECTION_MODE});");
 		aLines.add("\t\t\t\t\t\t}");
 		aLines.add("\t\t\t\t\t}");
@@ -71,7 +71,7 @@ public class CompilePanelFile  {
 		aLines.add("\t\t\t<a className=\"fortran-compiler-select-main-file\"");
 		aLines.add("\t\t\t\tonClick={() => {");
 		aLines.add("\t\t\t\t\t\tDispatcher.dispatch({action: AT.FILE_EXPLORER.OPEN_SELECTION_MODE});");
-		aLines.add("\t\t\t\t\t\tDispatcher.dispatch({action: AT." + aLanguage + "_COMPILE_PANEL.OPEN_" + aName.toUpperCase().replace(" ", "_") + "_SELECTION_MODE});");
+		aLines.add("\t\t\t\t\t\tDispatcher.dispatch({action: AT." + aLanguage + "_COMPILE_PANEL.OPEN" + aName.toUpperCase().replace(" ", "_") + "_SELECTION_MODE});");
 		aLines.add("\t\t\t\t\t}");
 		aLines.add("\t\t\t\t}");
 		aLines.add("\t\t\t>");
@@ -88,7 +88,7 @@ public class CompilePanelFile  {
 		aLines.add("\t\t\t\t<a className=\"fortran-compiler-select-main-file\"");
 		aLines.add("\t\t\t\t\tonClick={() => {");
 		aLines.add("\t\t\t\t\t\t\tDispatcher.dispatch({action: AT.FILE_EXPLORER.OPEN_SELECTION_MODE});");
-		aLines.add("\t\t\t\t\t\t\tDispatcher.dispatch({action: AT." + aLanguage + "_COMPILE_PANEL.OPEN_" + aName.toUpperCase().replace(" ", "_") + "SELECTION_MODE});");
+		aLines.add("\t\t\t\t\t\t\tDispatcher.dispatch({action: AT." + aLanguage + "_COMPILE_PANEL.OPEN" + aName.toUpperCase().replace(" ", "_") + "_SELECTION_MODE});");
 		aLines.add("\t\t\t\t\t\t}");
 		aLines.add("\t\t\t\t\t}");
 		aLines.add("\t\t\t\t>");

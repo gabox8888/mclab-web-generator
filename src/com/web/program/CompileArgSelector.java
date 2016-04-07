@@ -18,6 +18,9 @@ public class CompileArgSelector implements Writable {
 		aLanguage = pLanguage;
 		aArgs = new ArrayList<CompileArg>();
 		aHeader = new Header(ProgramType.FRONT);
+		aHeader.addModule(new FrontEndModule("Dispatcher","./Dispatcher"));
+		aHeader.addModule(new FrontEndModule("AT","./constants/AT"));
+		aHeader.addModule(new FrontEndModule("classnames","classnames"));
 		aHeader.addModule(new FrontEndModule("DropdownSelect","./DropdownSelect.react"));
 		aHeader.addModule(new FrontEndModule("{ DropdownButton, Input, MenuItem }","react-bootstrap"));
 		
@@ -43,13 +46,15 @@ public class CompileArgSelector implements Writable {
 		aLines.add("const " + aName + " = (props) => {");
 		
 		aLines.add("\treturn (");
+		aLines.add("\t\t<div>");
 		
 		for (CompileArg arg : aArgs) {
 			for (String s : arg.toFile()) {
-				aLines.add("\t\t" + s);
+				aLines.add("\t\t\t" + s);
 			}
 		}
 		
+		aLines.add("\t\t</div>");
 		aLines.add("\t);");
 		aLines.add("};");
 		

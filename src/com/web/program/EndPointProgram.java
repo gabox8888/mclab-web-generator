@@ -2,7 +2,7 @@ package com.web.program;
 
 import java.util.*;
 
-import com.web.program.BusinessFunction.Types;
+import com.web.program.Types;
 
 public class EndPointProgram implements Writable {
 	

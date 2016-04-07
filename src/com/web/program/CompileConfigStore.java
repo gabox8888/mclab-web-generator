@@ -17,6 +17,8 @@ public class CompileConfigStore implements Writable{
 		aLanguage = pLanguage.toUpperCase();
 		aCommand = pCommand;
 		aHeader = new Header(ProgramType.FRONT);
+		aHeader.addModule(new FrontEndModule("Dispatcher","../Dispatcher"));
+		aHeader.addModule(new FrontEndModule("AT","../constants/AT"));
 		aHeader.addModule(new FrontEndModule("{Store}", "flux/utils"));
 		aFiles  = new ArrayList<CompileConfigFile>();
 		
@@ -56,14 +58,21 @@ public class CompileConfigStore implements Writable{
 		aLines.add("\t\t\t\tthis._argumentList =  this._argumentList.push(payload.data['arg']);");
 		aLines.add("\t\t\t\tthis.__emitChange();");
 		aLines.add("\t\t\t\tbreak;");
-		aLines.add("\t\t\tcase AT." + aLanguage + "COMPILE_PANEL.EDIT_ARGUMENT:");
+		aLines.add("\t\t\tcase AT." + aLanguage + "_COMPILE_PANEL.EDIT_ARGUMENT:");
 		aLines.add("\t\t\t\tthis._argumentList =  this._argumentList.set(");
 		aLines.add("\t\t\t\t\tpayload.data.argIndex,");
 		aLines.add("\t\t\t\t\tpayload.data.arg");
 		aLines.add("\t\t\t\t);");
 		aLines.add("\t\t\t\tthis.__emitChange();");
 		aLines.add("\t\t\t\tbreak;");
-		
+		aLines.add("\t\t\tcase AT.FILE_EXPLORER.SELECT_FILE:");
+		for (CompileConfigFile aFile : aFiles) {
+			for (String s : aFile.declareSelectFile()) {
+				aLines.add("\t\t\t\t" + s);
+			}
+		}
+		aLines.add("\t\t\t\tbreak;");
+
 		for (CompileConfigFile aFile : aFiles) {
 			for (String s : aFile.declareDispatch()) {
 				aLines.add("\t\t\t" + s);

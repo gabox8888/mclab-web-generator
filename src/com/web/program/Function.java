@@ -1,5 +1,7 @@
 package com.web.program;
 
+import java.util.List;
+
 public interface Function{
 	
 	public String[] declareVariables();

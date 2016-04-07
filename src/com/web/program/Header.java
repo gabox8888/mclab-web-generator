@@ -15,14 +15,7 @@ public class Header {
 	private final String SESSION = "var session = require(__base + 'app/logic/util/session_utils');";
 	
 	//Standard set of front-end libraries
-	private final String AT = "import AT from '../constants/AT';";
-	private final String DISPATCHER = "import Dispatcher from '../Dispatcher';";
-	private final String IMMUTABLE = "import Immutable from 'immutable';";
-	private final String OPENFILE = "import OpenFileStore from '../stores/OpenFileStore';";
-	private final String TERMINAL = "import TerminalActions from './TerminalActions';";
-	private final String ONLOAD = "import OnLoadActions from './OnLoadActions';";
-	private final String EDITOR = "import EditorMarkerActions from './EditorMarkerActions';";
-	private final String REQUEST = "import request from 'superagent';";
+	private final String IMMUTABLE = "import immutable from 'immutable';";
 	private final String REACT = "import React from 'react';";
 		
 	private List<Module> Includes;
@@ -64,14 +57,7 @@ public class Header {
 				stringList.add(SESSION);
 				break;
 			case FRONT:
-				stringList.add(AT);
-				stringList.add(DISPATCHER);
 				stringList.add(IMMUTABLE);
-				stringList.add(OPENFILE);
-				stringList.add(TERMINAL);
-				stringList.add(ONLOAD);
-				stringList.add(EDITOR);
-				stringList.add(REQUEST);
 				stringList.add(REACT);
 				break;
 		}

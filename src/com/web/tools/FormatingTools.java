@@ -1,9 +1,12 @@
 package com.web.tools;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.json.simple.JSONObject;
+
+import com.web.program.Types;
 
 public class FormatingTools {
 	
@@ -109,6 +112,22 @@ public class FormatingTools {
 		
 	}
 	
+	public static String getNickname(String pName) {
+		String result = null;
+		String tName = pName.toLowerCase(); 
+		for(Types t : Types.values()) {
+			String tType = t.name().toLowerCase();
+			String[] aParsed = tName.split(tType);
+	
+			for(String s : aParsed) {
+				if(!s.equals(tName) && !s.equals("")) return capitalizeName(s);
+			}
+
+		}
+			
+		return result;
+	}
+	
 	public static String parseByCapitals(String pName) {
 		String[] aParsed = pName.split("(?<=.)(?=\\p{Lu})");
 		return aParsed[aParsed.length -1];
@@ -127,12 +146,12 @@ public class FormatingTools {
 	}
 	
 	public static String ififyFiles(String[] pFiles) {
-		String tempResult = "!this.props." + pFiles[0] + "Path && ";
+		String tempResult = "this.props." + pFiles[0] + "Path && ";
 		for (int i = 1; i < pFiles.length-1; i++) {
-			tempResult = tempResult + "!this.props." + pFiles[i] + "Path && ";
+			tempResult = tempResult + "this.props." + pFiles[i] + "Path && ";
 		}
 		
-		return tempResult + "!this.props." + pFiles[pFiles.length-1] + "Path";
+		return tempResult + "this.props." + pFiles[pFiles.length-1] + "Path";
 	}
 
 }

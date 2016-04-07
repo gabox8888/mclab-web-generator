@@ -3,7 +3,7 @@ package com.web.program;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.web.program.BusinessFunction.Types;
+import com.web.program.Types;
 import com.web.tools.FormatingTools;
 
 public class FrontEndButton implements Writable {
