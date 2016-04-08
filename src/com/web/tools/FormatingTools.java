@@ -1,7 +1,6 @@
 package com.web.tools;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.json.simple.JSONObject;
@@ -131,6 +130,15 @@ public class FormatingTools {
 	public static String parseByCapitals(String pName) {
 		String[] aParsed = pName.split("(?<=.)(?=\\p{Lu})");
 		return aParsed[aParsed.length -1];
+	}
+	
+	public static String parseByCamelCase(String pName) {
+		String[] aParsed = pName.split("(?<=.)(?=\\p{Lu})");
+		String result = "";
+		for (String s :aParsed) {
+			result = result + s.toUpperCase() + "_";
+		}
+		return result;
 	}
 	
 	public static String namifyArg(String pName) {

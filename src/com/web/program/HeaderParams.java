@@ -11,7 +11,7 @@ public class HeaderParams implements Params{
 	}
 	
 	public String toString() {
-		return "const " + aName + " = req.header.('" + aName + "');";
+		return "const " + FormatingTools.uncapitalizeName(aName) + " = req.header('" + aName + "');";
 	}
 	
 	@Override

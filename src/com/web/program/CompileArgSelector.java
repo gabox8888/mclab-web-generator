@@ -9,26 +9,46 @@ public class CompileArgSelector implements Writable {
 	
 	private Command aCommand;
 	private Language aLanguage;
+	private String aAction;
 	private Header aHeader;
-	private List<CompileArg> aArgs;
+	private List<Arg> aArgs;
 	private String aName;
 	
 	public CompileArgSelector (Command pCommand, Language pLanguage) {
 		aCommand = pCommand;
 		aLanguage = pLanguage;
-		aArgs = new ArrayList<CompileArg>();
+		
+		initArgSelector();
+
+		aName = aLanguage.getName() + "CompileArgumentSelector";
+		
+		for (String s : aCommand.getArgsParams()) {
+			aArgs.add(new CompileArg(s,aLanguage.getName(),aCommand));
+		}
+	}
+	
+	public CompileArgSelector (Command pCommand, String pAction) {
+		aCommand = pCommand;
+		aLanguage = null;
+		aAction = pAction;
+		
+		initArgSelector();
+		
+		aName = aAction + "ArgumentSelector";
+		
+		for (String s : aCommand.getArgsParams()) {
+			aArgs.add(new AnalysisArg(s,aAction,aCommand));
+		}
+	}
+	
+	private void initArgSelector() {
+		aArgs = new ArrayList<Arg>();
 		aHeader = new Header(ProgramType.FRONT);
 		aHeader.addModule(new FrontEndModule("Dispatcher","./Dispatcher"));
 		aHeader.addModule(new FrontEndModule("AT","./constants/AT"));
 		aHeader.addModule(new FrontEndModule("classnames","classnames"));
 		aHeader.addModule(new FrontEndModule("DropdownSelect","./DropdownSelect.react"));
 		aHeader.addModule(new FrontEndModule("{ DropdownButton, Input, MenuItem }","react-bootstrap"));
-		
-		aName = aLanguage.getName() + "CompileArgumentSelector";
-		
-		for (String s : aCommand.getArgsParams()) {
-			aArgs.add(new CompileArg(s,aLanguage.getName(),aCommand));
-		}
 	}
 	
 	public String getName() {
@@ -48,7 +68,7 @@ public class CompileArgSelector implements Writable {
 		aLines.add("\treturn (");
 		aLines.add("\t\t<div>");
 		
-		for (CompileArg arg : aArgs) {
+		for (Arg arg : aArgs) {
 			for (String s : arg.toFile()) {
 				aLines.add("\t\t\t" + s);
 			}
@@ -57,15 +77,22 @@ public class CompileArgSelector implements Writable {
 		aLines.add("\t\t</div>");
 		aLines.add("\t);");
 		aLines.add("};");
-		
-		aLines.add(aLanguage.getName() + "CompileArgumentSelector.propTypes = {");
+		if (aLanguage != null) {
+			aLines.add(aLanguage.getName() + "CompileArgumentSelector.propTypes = {");
+		} else {
+			aLines.add(aAction + "ArgumentSelector.propTypes = {");
+		}
 		aLines.add("\targIndex: PropTypes.number.isRequired,");
 		for(String s : aCommand.getArgsParams()) {
 			aLines.add("\t" + s + ": PropTypes.number.isRequired,");
 		}
 		aLines.add("};");
 		
-		aLines.add("module.exports = " + aLanguage.getName() + "CompileArgumentSelector;");
+		if (aLanguage != null) {
+			aLines.add("module.exports = " + aLanguage.getName() + "CompileArgumentSelector;");
+		} else {
+			aLines.add("module.exports = " + aAction + "ArgumentSelector;");
+		}
 
 		return aLines.toArray(new String[aLines.size()]);
 	}

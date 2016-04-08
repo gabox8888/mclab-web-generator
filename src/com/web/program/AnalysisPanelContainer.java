@@ -6,18 +6,18 @@ import java.util.List;
 import com.web.program.Program.ProgramType;
 import com.web.tools.FormatingTools;
 
-public class CompilePanelContainer implements Writable,PanelContainer {
+public class AnalysisPanelContainer implements Writable, PanelContainer {
 	
 	private Command aCommand;
-	private String aLanguage;
+	private String aAction;
 	private String aConfigStore;
 	private String aPanel;
 	private Header aHeader;
 	private String aName;
 	
-	public CompilePanelContainer(Command pCommand, String pLanguage, String pConfigStore, String pPanel) {
+	public AnalysisPanelContainer(Command pCommand, String pAction, String pConfigStore, String pPanel) {
 		aCommand = pCommand;
-		aLanguage = pLanguage;
+		aAction = pAction;
 		aConfigStore = pConfigStore; 
 		aPanel = pPanel;
 		aHeader = new Header(ProgramType.FRONT);
@@ -25,7 +25,7 @@ public class CompilePanelContainer implements Writable,PanelContainer {
 		aHeader.addModule(new FrontEndModule(aConfigStore,"./stores/" + aConfigStore));
 		aHeader.addModule(new FrontEndModule(aPanel,"./" + aPanel + ".react"));
 		
-		aName = aLanguage + "CompilePanelContainer";
+		aName = aAction + "PanelContainer";
 	}
 	
 	@Override
@@ -50,20 +50,12 @@ public class CompilePanelContainer implements Writable,PanelContainer {
 		aLines.add("\t}");
 		aLines.add("\tstatic calculateState(prevState) {");
 		aLines.add("\t\treturn {");
-		for (String s : aCommand.getFileParams()) {
-			aLines.add("\t\t\t" + s + "Path: " + aConfigStore + ".get" + FormatingTools.capitalizeName(s) + "Path(),");
-			aLines.add("\t\t\tunconfirmed" + FormatingTools.capitalizeName(s) + "Path: " + aConfigStore + ".getUnconfirmed" + FormatingTools.capitalizeName(s) + "Path(),");
-		}
 		aLines.add("\t\t\targumentList: " + aConfigStore + ".getArgumentList(),");
 		aLines.add("\t\t};");
 		aLines.add("\t}");
 		aLines.add("\trender() {");
 		aLines.add("\t\treturn (");
 		aLines.add("\t\t\t<" + aPanel);
-		for(String s : aCommand.getFileParams()) {
-			aLines.add("\t\t\t\t" + s + "Path={this.state." + s + "Path}");
-			aLines.add("\t\t\t\tunconfirmed" + FormatingTools.capitalizeName(s) + "Path={this.state.unconfirmed" + FormatingTools.capitalizeName(s) + "Path}");
-		}
 		aLines.add("\t\t\t\targumentList={this.state.argumentList}");
 		aLines.add("\t\t\t/>");
 		aLines.add("\t\t);");

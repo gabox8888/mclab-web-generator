@@ -1,7 +1,6 @@
 package com.web.program;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.web.tools.FormatingTools;
@@ -88,12 +87,12 @@ public class BusinessFunction implements Function {
 		} else {
 			
 			for(String s : aCommand.getFileParams()) {
-				addParam(new ParamParams(s));
+				aParams.add(new ParamParams(s));
 				addParam(new FileParams(s));
 			}
 			
 			for(String s : aCommand.getArgsParams()) {
-				addParam(new ParamParams(s));
+				aParams.add(new ParamParams(s));
 			}
 		}
 		
@@ -146,7 +145,7 @@ public class BusinessFunction implements Function {
 		switch (aType) {
 			case ANALYSIS:
 				aLines.add("const command = `" + aCommand.toString() + "`;");
-				aLines.add("child_process.exec(command, function(error, stdout) {");
+				aLines.add("child_process.exec(command, (error, stdout) =>{");
 				aLines.add("\ttry {");
 				aLines.add("\t\tlet output = JSON.parse(stdout);");
 				
@@ -204,7 +203,7 @@ public class BusinessFunction implements Function {
 				aLines.add("\t\t\t// Remove the " + FormatingTools.uncapitalizeName(aLanguage.getName()) + "-code subfolder, if it exists, and make a new one");
 				aLines.add("\t\t\tchild_process.exec('rm -r ' + " + aLanguageDir + ", (err) =>{");
 				aLines.add("\t\t\t\tfs.mkdir(" + aLanguageDir + ", (err)=>{");
-				aLines.add("\t\t\t\t\tconst pathToResult = path.join(" + aLanguageDir +  ", '" + aLanguage.getExt() + "'");
+				aLines.add("\t\t\t\t\tconst pathToResult = path.join(" + aLanguageDir +  ", '" + aLanguage.getExt() + "');");
 				aLines.add("\t\t\t\t\tfs.writeFile(pathToResult, stdout, (err)=>{");
 				aLines.add("\t\t\t\t\t\tcb(null,{package_path: pathToResult});");
 				aLines.add("\t\t\t\t\t});");
@@ -241,44 +240,5 @@ public class BusinessFunction implements Function {
 		return aLines.toArray(new String[aLines.size()]);
 	}
 	
-	public String getRoute() {
-		
-		String aRoute = null;
-		
-		switch (aType) {
-			case ANALYSIS:
-				aRoute = "app.get('/analysis/" + FormatingTools.removeDescriptor(aName, "Analysis") +
-						 ":filepath([\\w-]*)/?', analysis." + aName + ");";
-				break;
-			case COMPILE: 
-				aRoute = "app.post('/compile/" + FormatingTools.removeDescriptor(aName, "Compile") +
-						 "', compile." + aName + ");";
-				break;
-			case FILE:
-				aRoute = "app.post('/compile/" + FormatingTools.removeDescriptor(aName, "Compile") +
-				 "', compile." + aName + ");";
-				break;
-		}
-		
-		return aRoute;
-	}
-	
-	public String getEndPoint() {
-		String aEndPoint = null;
-		
-		switch (aType) {
-			case ANALYSIS:
-				aEndPoint = "/analysis/" + FormatingTools.removeDescriptor(aName, "Analysis") ;
-				break;
-			case COMPILE: 
-				aEndPoint = "/compile/" + FormatingTools.removeDescriptor(aName, "Compile");
-				break;
-			case FILE:
-				aEndPoint = "/compile/" + FormatingTools.removeDescriptor(aName, "Compile");
-				break;
-		}
-		
-		return aEndPoint;
-	}
 
 }

@@ -47,7 +47,7 @@ public class RequestFunction implements Function {
 			}
 			
 			for(String s : aCommand.getArgsParams()) {
-				addParam(new ParamParams(s));
+				addParam(new QueryParams(s));
 			}
 		}	
 	}
@@ -115,6 +115,46 @@ public class RequestFunction implements Function {
 	@Override
 	public void addParam(Params pParam) {
 		aParams.add(pParam);
+	}
+	
+	public String getRoute() {
+		
+		String aRoute = null;
+		
+		switch (aType) {
+			case ANALYSIS:
+				aRoute = "app.get('/analysis/" + FormatingTools.removeDescriptor(aName, "Analysis") +
+						 "/:filepath([\\\\w-]*)/?', analysis." + aName + ");";
+				break;
+			case COMPILE: 
+				aRoute = "app.post('/compile/" + FormatingTools.removeDescriptor(aName, "Compile") +
+						 "', compile." + aName + ");";
+				break;
+			case FILE:
+				aRoute = "app.post('/compile/" + FormatingTools.removeDescriptor(aName, "Compile") +
+				 "', compile." + aName + ");";
+				break;
+		}
+		
+		return aRoute;
+	}
+	
+	public String getEndPoint() {
+		String aEndPoint = null;
+		
+		switch (aType) {
+			case ANALYSIS:
+				aEndPoint = "/analysis/" + FormatingTools.removeDescriptor(aName, "Analysis") ;
+				break;
+			case COMPILE: 
+				aEndPoint = "/compile/" + FormatingTools.removeDescriptor(aName, "Compile");
+				break;
+			case FILE:
+				aEndPoint = "/compile/" + FormatingTools.removeDescriptor(aName, "Compile");
+				break;
+		}
+		
+		return aEndPoint;
 	}
 
 }

@@ -64,6 +64,7 @@ public class Driver {
 			e.printStackTrace();
 		}
 		Types aType = Types.valueOf(jsonType);
+		boolean aUsePanel = false;
 		
 		Program aProgram = new Program(aType.name(),ProgramType.BACK);
 		Program aProgramFront = null;
@@ -72,10 +73,14 @@ public class Driver {
 		Language aLanguage = null;
 		CompileArgSelector aArgSelector = null;
 		CompileConfigStore aConfigStore = null;
+		AnalysisConfigStore aActionStore = null;
 		CompilePanel aCompilePanel = null;
 		SidePanel aSidePanel = null;
 		CompilePanelContainer aCompilePanelContainer = null;
+		AnalysisPanelContainer aAnalysisPanelContainer = null;
 		UserFiles aUserFiles = null;
+		Function aFrontFunction = null;
+		Function aRequestFunction = null;
 
 		File fMainBackend = null;
 		File fUserFiles = null;
@@ -96,22 +101,78 @@ public class Driver {
 				Function aFormatFunction = new FormatFunction("extract"+jsonName,jsonInputFormat,jsonOutoutFormat);
 				aProgramFront = new Program(jsonName + "Actions",ProgramType.FRONT);
 				aBusinessFunction = new BusinessFunction(jsonName,aType,aCommand, aFormatFunction);
+				aRequestFunction = new RequestFunction(jsonName,aType,aCommand,aBusinessFunction);
+				aFrontFunction = new FrontEndFunction("begin" + jsonName , aCommand, (RequestFunction)aRequestFunction,jsonName,aType);
 				aProgram.addFunction(aFormatFunction);
+				aProgramFront.addMainFunction(aFrontFunction);
 				
 				fMainBackend = new File(BASE_PATH + "mcnode/app/logic/tools/analysis.js");
+				
+				if (aCommand.getArgsParams().length >0) {
+					aUsePanel = true;
+					
+					aActionStore = new AnalysisConfigStore(jsonName);
+					aProgramFront = new Program(jsonName + "Actions",ProgramType.FRONT,aActionStore);
+					
+//					aProgram.addFunction(aFormatFunction);
+					aProgramFront.addMainFunction(aFrontFunction);
+					
+					aArgSelector = new CompileArgSelector(aCommand, jsonName);
+					aCompilePanel = new CompilePanel(jsonName,aCommand,aArgSelector,aProgramFront);
+					aAnalysisPanelContainer = new AnalysisPanelContainer(aCommand,jsonName, aActionStore.getName(),aCompilePanel.getName());
+					aSidePanel = new SidePanel(aAnalysisPanelContainer,aCompilePanel);
+					
+					Function aOpenPanelFunction = new OpenPanelFunction(jsonName+"Panel");
+					aProgramFront.addFunction(aOpenPanelFunction);
+					
+					fCompileArgSelector = new File(BASE_PATH + "js/" + aArgSelector.getName()+ ".react.js");
+					fCompilePanel = new File(BASE_PATH + "js/" + aCompilePanel.getName() + ".react.js");
+					fCompileStore = new File(BASE_PATH + "js/stores/" + aActionStore.getName() + ".js");
+					fCompilePanelContainer = new File(BASE_PATH + "js/" + aAnalysisPanelContainer.getName() + ".react.js");
+					fSidePanel = new File(BASE_PATH + "js/SidePanel.react.js");
+					fActivePanelStore = new File(BASE_PATH + "js/stores/ActiveSidePanelStore.js");
+					fPanelKeys = new File(BASE_PATH + "js/constants/SidePanelKeys.js");
+					
+					TextEditor aActionStoreEditor = new TextEditor(fCompileStore, aActionStore,false);
+					aActionStoreEditor.writeToFile();
+					
+					TextEditor aArgSelectorEditor = new TextEditor(fCompileArgSelector, aArgSelector,false);
+					aArgSelectorEditor.writeToFile();
+					
+					TextEditor aAnalysisPanelEditor = new TextEditor(fCompilePanel, aCompilePanel,false);
+					aAnalysisPanelEditor.writeToFile();
+					
+					TextEditor aAnalysisPanelContainerEditor = new TextEditor(fCompilePanelContainer, aAnalysisPanelContainer,false);
+					aAnalysisPanelContainerEditor.writeToFile();
+					
+					TextEditor aSidePanelEditor = new TextEditor(fSidePanel, aSidePanel,true);
+					aSidePanelEditor.writeToFile();
+					
+					TextEditor aPanelKeysEditor = new TextEditor(fPanelKeys, aCompilePanel,true);
+					aPanelKeysEditor.writeToFile();
+					
+					TextEditor aActivePanelEditor = new TextEditor(fActivePanelStore, aCompilePanel,true);
+					aActivePanelEditor.writeToFile();
+					
+				}
+
 				break;
 			default:
+				aUsePanel = true;
+				
 				aLanguage = new Language(jsonLanguageName,jsonLanguageExt);
 				aConfigStore = new CompileConfigStore(aLanguage.getName(),aCommand);
 				aProgramFront = new Program(aLanguage.getName() + "CompileActions",ProgramType.FRONT,aConfigStore);
 				aCompilePanel = new CompilePanel(aLanguage,aCommand,aArgSelector,aProgramFront);
 				aArgSelector = new CompileArgSelector(aCommand, aLanguage);
 				aBusinessFunction = new BusinessFunction(jsonName,aType,aCommand,aLanguage);
+				aRequestFunction = new RequestFunction(jsonName,aType,aCommand,aBusinessFunction);
+				aFrontFunction = new FrontEndFunction("begin" + jsonName , aCommand, (RequestFunction) aRequestFunction,aLanguage,aType);
 				aCompilePanelContainer = new CompilePanelContainer(aCommand,aLanguage.getName(), aConfigStore.getName(),aCompilePanel.getName());
 				aSidePanel = new SidePanel(aCompilePanelContainer,aCompilePanel);
 				aUserFiles = new UserFiles(aLanguage);
 				
-				Function aOpenPanelFunction = new OpenPanelFunction(aLanguage.getName());
+				Function aOpenPanelFunction = new OpenPanelFunction(aLanguage.getName() + "CompilePanel");
 				aProgramFront.addFunction(aOpenPanelFunction);
 
 				
@@ -155,20 +216,17 @@ public class Driver {
 		String aATName = null;
 		
 		if (aType != Types.ANALYSIS) {
-			 aATName = aLanguage.getName() + " Compile Panel";
+			 aATName = aLanguage.getName() + "CompilePanel";
 		} else {
-			 aATName = jsonName.toUpperCase();
+			 aATName = jsonName+"Panel";
 		}
-		
-		Function aRequestFunction = new RequestFunction(jsonName,aType,aCommand,aBusinessFunction);
-		Function aFrontFunction = new FrontEndFunction("begin" + jsonName , aCommand, (BusinessFunction)aBusinessFunction, aLanguage,aType);
-		EndPointProgram aEndPoint = new EndPointProgram((BusinessFunction) aBusinessFunction,aType); 
+		 
+		EndPointProgram aEndPoint = new EndPointProgram((RequestFunction) aRequestFunction,aType); 
 		ATComponent aATComponent = new ATComponent(aATName, aType,aCommand);
-		FrontEndButton aButton = new FrontEndButton(aProgramFront,aType,jsonName);
+		FrontEndButton aButton = new FrontEndButton(aProgramFront,aUsePanel,jsonName);
 		
-		aProgramFront.addMainFunction(aFrontFunction);
 		aProgram.addFunction(aBusinessFunction);
-		aProgram.addFunction(aRequestFunction);
+		aProgram.addMainFunction(aRequestFunction);
 		
 		fMainFrontend = new File(BASE_PATH + "js/actions/" + aProgramFront.getName() + ".js");
 		fATComponent = new File(BASE_PATH + "js/constants/AT.js");

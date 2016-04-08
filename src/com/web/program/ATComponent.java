@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.web.program.Types;
+import com.web.tools.FormatingTools;
 
 public class ATComponent implements Writable {
 	
@@ -12,7 +13,7 @@ public class ATComponent implements Writable {
 	private Command aCommand;
 	
 	public ATComponent (String pName, Types pType,Command pCommand) {
-		aName = generateName(pName);
+		aName = FormatingTools.parseByCamelCase(pName).replaceFirst(".$","");
 		aType = pType;
 		aCommand = pCommand;
 	}
@@ -48,6 +49,11 @@ public class ATComponent implements Writable {
 				    
 				} else {
 					aLines.add("\t\tOPEN_PANEL: '',");
+					if (aCommand.getArgsParams().length >0) {
+						aLines.add("\t\tADD_ARGUMENT: '',");
+					    aLines.add("\t\tDELETE_ARGUMENT: '',");
+					    aLines.add("\t\tEDIT_ARGUMENT: '',");
+					}
 				}
 				aLines.add("\t},");
 				break;

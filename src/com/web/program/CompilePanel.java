@@ -14,6 +14,7 @@ public class CompilePanel implements Writable {
 	private Program aActionProgram;
 	private Header aHeader;
 	private String aName;
+	private String aAction;
 	private List<CompilePanelFile> aFiles;
 	
 	public CompilePanel (Language pLanguage, Command pCommand, CompileArgSelector pArgSelector, Program pActionProgram) {
@@ -21,6 +22,33 @@ public class CompilePanel implements Writable {
 		aCommand = pCommand;
 		aArgSelector = pArgSelector;
 		aActionProgram = pActionProgram;
+		aAction = null;
+		
+		initPanel();
+		
+		aName = aLanguage.getName() + "CompilePanel";
+		
+		for(String s : aCommand.getFileParams()) {
+			aFiles.add(new CompilePanelFile(s, aLanguage.getName().toUpperCase()));
+		}
+
+	}
+	
+	public CompilePanel (String pAction,Command pCommand, CompileArgSelector pArgSelector, Program pActionProgram) {
+		aLanguage = null;
+		aCommand = pCommand;
+		aArgSelector = pArgSelector;
+		aActionProgram = pActionProgram;
+		
+		initPanel();
+		
+		aAction = pAction;
+		aName = pAction + "Panel";
+		
+
+	}
+	
+	private void initPanel() {
 		aHeader = new Header(ProgramType.FRONT);
 		aHeader.addModule(new FrontEndModule("classnames","classnames"));
 		aHeader.addModule(new FrontEndModule("SidePanelBase","./SidePanelBase.react"));
@@ -29,14 +57,7 @@ public class CompilePanel implements Writable {
 		aHeader.addModule(new FrontEndModule(aActionProgram.getName(),"./actions/" + aActionProgram.getName() ));
 		aHeader.addModule(new FrontEndModule(aArgSelector.getName(),"./" + aArgSelector.getName() + ".react"));
 		aHeader.addModule(new FrontEndModule("{ DropdownButton, MenuItem }","react-bootstrap"));
-		
-		aName = aLanguage.getName() + "CompilePanel";
-		
 		aFiles = new ArrayList<CompilePanelFile>();
-		for(String s : aCommand.getFileParams()) {
-			aFiles.add(new CompilePanelFile(s, aLanguage.getName().toUpperCase()));
-		}
-
 	}
 	
 	public String getName() {
@@ -55,11 +76,15 @@ public class CompilePanel implements Writable {
 		aLines.add("class " + aName + " extends Component {");
 		aLines.add("\trender() {");
 		aLines.add("\t\treturn (");
-		aLines.add("\t\t\t<SidePanelBase title=\"Compile to " + aLanguage.getName() + "\">");
-		for (CompilePanelFile aFile : aFiles ) {
-			for (String s : aFile.declareFileContainer()) {
-				aLines.add("\t\t\t\t" + s);
+		if (aLanguage != null) {
+			aLines.add("\t\t\t<SidePanelBase title=\"Compile to " + aLanguage.getName() + "\">");
+			for (CompilePanelFile aFile : aFiles ) {
+				for (String s : aFile.declareFileContainer()) {
+					aLines.add("\t\t\t\t" + s);
+				}
 			}
+		} else {
+			aLines.add("\t\t\t<SidePanelBase title=\"Run " + aAction + "\">");
 		}
 		aLines.add("\t\t\t\t{this._getArgumentCard()}");
 		aLines.add("\t\t\t\t{this._getCompileButton()}");
@@ -68,24 +93,33 @@ public class CompilePanel implements Writable {
 		aLines.add("\t}");	     
 		
 		aLines.add("\t_getCompileButton() {");
-		aLines.add("\t\tif (!(" + FormatingTools.ififyFiles(aCommand.getFileParams()) + ")) {");
-		aLines.add("\t\t\treturn null");
-		aLines.add("\t\t}");
+		if (aLanguage != null) {
+			aLines.add("\t\tif (!(" + FormatingTools.ififyFiles(aCommand.getFileParams()) + ")) {");
+			aLines.add("\t\t\treturn null");
+			aLines.add("\t\t}");
+		}
 		aLines.add("\t\treturn (");
 		aLines.add("\t\t\t<div className=\"fortran-compile-final-button-container\">");
 		aLines.add("\t\t\t\t<a");
 		aLines.add("\t\t\t\t\tclassName=\"pure-button side-panel-button\"");
 		aLines.add("\t\t\t\t\tonClick={" + aActionProgram.getName() + "." + aActionProgram.getMainFunction().getName() + "}>");
-		aLines.add("\t\t\t\t\tCompile");
+		if (aLanguage != null) {
+			aLines.add("\t\t\t\t\tCompile");
+		} else {
+			aLines.add("\t\t\t\t\t" + aAction);
+		}
 		aLines.add("\t\t\t\t</a>");
 		aLines.add("\t\t\t</div>");
 		aLines.add("\t\t);");
 		aLines.add("\t}");
 		
 		aLines.add("\t_getArgumentCard() {");
-		aLines.add("\t\tif (!(" + FormatingTools.ififyFiles(aCommand.getFileParams()) + ")) {");
-		aLines.add("\t\t\treturn null");
-		aLines.add("\t\t}");
+		
+		if (aLanguage != null) {
+			aLines.add("\t\tif (!(" + FormatingTools.ififyFiles(aCommand.getFileParams()) + ")) {");
+			aLines.add("\t\t\treturn null");
+			aLines.add("\t\t}");
+		}
 		aLines.add("\t\t// This allows for multiple arguments");	    
 		aLines.add("\t\tlet argumentSelectors = [];");
 		aLines.add("\t\tlet count = 0;");
@@ -115,7 +149,11 @@ public class CompilePanel implements Writable {
 		aLines.add("\t\t\treturn (");
 		aLines.add("\t\t\t\t<a className=\"fortran-compiler-select-main-file\"");
 		aLines.add("\t\t\t\t\tonClick={() => Dispatcher.dispatch({");
-		aLines.add("\t\t\t\t\t\taction: AT." + aLanguage.getName().toUpperCase() + "_COMPILE_PANEL.ADD_ARGUMENT,");
+		if (aLanguage != null) {
+			aLines.add("\t\t\t\t\t\taction: AT." + aLanguage.getName().toUpperCase() + "_COMPILE_PANEL.ADD_ARGUMENT,");
+		} else {
+			aLines.add("\t\t\t\t\t\taction: AT." + FormatingTools.parseByCamelCase(aAction) + "PANEL.ADD_ARGUMENT,");
+		}
 		aLines.add("\t\t\t\t\t\tdata: {");
 		aLines.add("\t\t\t\t\t\t\t// IMPROVE: Hard coding a default arg here is icky.");
 		aLines.add("\t\t\t\t\t\t\targ: {");
@@ -160,11 +198,11 @@ public class CompilePanel implements Writable {
 
 		switch(pPart) {
 			case EXPORTS:
-				aLines.add("\t" + aLanguage.getName().toUpperCase() + "_COMPILE_PANEL: '',");
+				aLines.add("\t" + getConstant() + ": '',");
 				break;
 			case ACTIVE_SIDE_PANEL:
-				aLines.add("\t\t\tcase AT." + aLanguage.getName().toUpperCase() + "_COMPILE_PANEL.OPEN_PANEL:");
-		        aLines.add("\t\t\t\tthis._activePanel = SidePanelKeys." + aLanguage.getName().toUpperCase() + "_COMPILE_PANEL;"); 
+				aLines.add("\t\t\tcase AT." + getConstant() + ".OPEN_PANEL:");
+		        aLines.add("\t\t\t\tthis._activePanel = SidePanelKeys." + getConstant() + ";"); 
 		        aLines.add("\t\t\t\tthis.__emitChange();");
 		        aLines.add("\t\t\t\tbreak;");
 				break;
@@ -175,7 +213,11 @@ public class CompilePanel implements Writable {
 	}
 	
 	public String getConstant() {
-		return aLanguage.getName().toUpperCase() + "_COMPILE_PANEL";
+		if(aLanguage == null) {
+			return FormatingTools.parseByCamelCase(aAction) + "PANEL";
+		}else{
+			return aLanguage.getName().toUpperCase() + "_COMPILE_PANEL";
+		}
 	}
 
 }

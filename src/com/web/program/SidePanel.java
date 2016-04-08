@@ -5,11 +5,11 @@ import java.util.List;
 
 public class SidePanel implements Writable {
 	
-	private CompilePanelContainer aContainer;
+	private PanelContainer aContainer;
 	private CompilePanel aPanel;
 	private Module aModule;
 	
-	public SidePanel(CompilePanelContainer pContainer, CompilePanel pPanel) {
+	public SidePanel(PanelContainer pContainer, CompilePanel pPanel) {
 		aContainer = pContainer;
 		aPanel = pPanel;
 		aModule = new FrontEndModule(aContainer.getName(), "./" + aContainer.getName() + ".react");
@@ -30,7 +30,7 @@ public class SidePanel implements Writable {
 				aLines.add(aModule.toString());
 				break;
 			case FUNCTIONS:
-				aLines.add("[SidePanelKeys." + aPanel.getConstant() + ", " + aContainer.getName() + "],");
+				aLines.add("\t[SidePanelKeys." + aPanel.getConstant() + ", " + aContainer.getName() + "],");
 				break;
 			default:
 				break;

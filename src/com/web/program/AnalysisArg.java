@@ -5,15 +5,15 @@ import java.util.List;
 
 import com.web.tools.FormatingTools;
 
-public class CompileArg implements Arg {
+public class AnalysisArg implements Arg {
 	
 	String aName;
-	String aLanguage;
+	String aAction;
 	Command aCommand;
 	
-	public CompileArg(String pName, String pLanguage, Command pCommand) {
+	public AnalysisArg(String pName, String pAction, Command pCommand) {
 		aName = pName;
-		aLanguage = pLanguage;
+		aAction = pAction;
 		aCommand = pCommand;
 	}
 
@@ -32,7 +32,7 @@ public class CompileArg implements Arg {
 		aLines.add("\tonChange={(event) => {");
 		aLines.add("\t\tconst newValue = event.target.value;");
 		aLines.add("\t\tDispatcher.dispatch({");
-		aLines.add("\t\t\taction: AT." + aLanguage.toUpperCase() +"_COMPILE_PANEL.EDIT_ARGUMENT,");
+		aLines.add("\t\t\taction: AT." +  FormatingTools.parseByCamelCase(aAction) +"PANEL.EDIT_ARGUMENT,");
 		aLines.add("\t\t\tdata: {");
 		aLines.add("\t\t\t\targIndex: props.argIndex,");
 		aLines.add("\t\t\t\targ: {");

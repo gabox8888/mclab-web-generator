@@ -6,10 +6,10 @@ import com.web.program.Types;
 
 public class EndPointProgram implements Writable {
 	
-	BusinessFunction aFunction;
+	RequestFunction aFunction;
 	Types aType;
 	
-	public EndPointProgram(BusinessFunction pFunction, Types pType) {
+	public EndPointProgram(RequestFunction pFunction, Types pType) {
 		aFunction = pFunction;
 		aType = pType;
 	}
@@ -25,7 +25,7 @@ public class EndPointProgram implements Writable {
 		List<String> aLines = new ArrayList<String>();
 		
 		if ((aType == Types.ANALYSIS && pPart == PartialParts.END_POINT_ANALYSIS) || (aType != Types.ANALYSIS && pPart == PartialParts.END_POINT_COMPILE)) {
-			aLines.add(aFunction.getRoute());
+			aLines.add("\t\t" + aFunction.getRoute());
 		} 
 		
 		return aLines.toArray(new String[aLines.size()]);

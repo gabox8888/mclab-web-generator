@@ -2,6 +2,8 @@ package com.web.program;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.web.tools.FormatingTools;
+
 
 public class OpenPanelFunction implements Function {
 	
@@ -10,7 +12,7 @@ public class OpenPanelFunction implements Function {
 	
 	public OpenPanelFunction(String pLanguage) {
 		aName = "openPanel";
-		aLanguage = pLanguage;
+		aLanguage = FormatingTools.parseByCamelCase(pLanguage).replaceFirst(".$","");
 	}
 
 	@Override
@@ -28,7 +30,7 @@ public class OpenPanelFunction implements Function {
 	public String[] declareBody() {
 		List<String> aLines = new ArrayList<String>();
 		aLines.add("\tDispatcher.dispatch({");
-		aLines.add("\t\taction: AT." + aLanguage.toUpperCase() + "_COMPILE_PANEL.OPEN_PANEL");
+		aLines.add("\t\taction: AT." + aLanguage + ".OPEN_PANEL");
 		aLines.add("\t});");
 		return aLines.toArray(new String[aLines.size()]);
 	}

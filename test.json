@@ -1,34 +1,17 @@
 {
 	"outputType" : "ZIP",
-	"command": "${config.MCVM_PATH} %mainFile @intCount @doubleNum*@test@test2 %secondaryFile %aspectFile",
-	"name": "CompileMcMvm",
-	"type": "FILE",
+	"command": "/home/gabe/McGill/McLab-400/mclab-ide/support/refactor.sh ExtractFunction %mainFile @selection @newName",
+	"name": "RefactorAnalysis",
+	"type": "ANALYSIS",
 	"inFormat" : {
-		"name": {
-			"name" : "name",
-			"position" : {
-				"start" : {
-					"line" : "startRow",
-					"column" : "startColumn"
-				},
-				"end" : {
-					"line" : "endRow",
-					"column" : "endColumn"
-				}
-			}
-		}
+		"modified": "ref"
 	},
 	"outFormat" : {
-		"name" : "name",
-		"position" : {
-			"startRow" : "startRow",
-			"startColumn" : "startColumn",
-			"endRow": "endRow",
-			"endColumn" : "endColumn"
-		}
+		"newCode" : "ref"
 	},
 	"compileLanguage" : {
 		"name" : "McMvm",
 		"ext" : "generated.js"
-	}
+	},
+	"basePath" : "/home/gabe/McGill/McLab-400/McLab-Web"
 }

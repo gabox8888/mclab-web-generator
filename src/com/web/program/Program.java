@@ -14,7 +14,7 @@ public class Program implements Writable{
 	private Header aHeader;
 	private String aName;
 	private Function aMainFunction;
-	private CompileConfigStore aStore;
+	private ConfigStore aStore;
 	
 	public Program(String pName, ProgramType pType) {
 		aFunctions = new ArrayList<Function>();
@@ -36,7 +36,7 @@ public class Program implements Writable{
 		}
 	}
 	
-	public Program(String pName, ProgramType pType, CompileConfigStore pStore) {
+	public Program(String pName, ProgramType pType, ConfigStore pStore) {
 		aFunctions = new ArrayList<Function>();
 		aType = pType;
 		aHeader = new Header(aType);
@@ -55,7 +55,6 @@ public class Program implements Writable{
 			aHeader.addModule(new FrontEndModule("TerminalActions","./TerminalActions"));
 			aHeader.addModule(new FrontEndModule("request","superagent"));
 			aHeader.addModule(new FrontEndModule("OnLoadActions","./OnLoadActions"));
-
 
 		}
 	}
@@ -100,7 +99,7 @@ public class Program implements Writable{
 		int k = 0;
 		for (Function f: aFunctions) {
 			if (k ==  aFunctions.size() - 2) aLines.add("\t" + f.getName() + ",");
-			else aLines.add("\t" + f.getName());
+			else aLines.add("\t" + f.getName() + ",");
 			
 		}
 		return aLines.toArray(new String[aLines.size()]);

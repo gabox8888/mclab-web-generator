@@ -1,15 +1,15 @@
 package com.web.program;
 
-public class ParamParams implements Params{
+public class QueryParams implements Params{
 	
 	private String aName;
 	
-	public ParamParams(String pName) {
+	public QueryParams(String pName) {
 		aName = pName;
 	}
 	
 	public String toString() {
-		return "const " + aName + " = req.params.filepath;";
+		return "const " + aName + " = req.query." + aName + ";";
 	}
 	
 	@Override

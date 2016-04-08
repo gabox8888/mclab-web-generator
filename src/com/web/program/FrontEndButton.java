@@ -10,14 +10,14 @@ public class FrontEndButton implements Writable {
 	
 	private Program aAction;
 	private Module aModule;
-	private Types aType;
 	private String aName;
+	private boolean aPanel;
 	
-	public FrontEndButton (Program pAction, Types pType, String pName) {
-		aType = pType;
+	public FrontEndButton (Program pAction, boolean pPanel, String pName) {
 		aAction = pAction;
 		aModule = new FrontEndModule(pAction.getName(),"./actions/" + aAction.getName());
 		aName = pName;
+		aPanel = pPanel;
 	}
 	
 	@Override
@@ -35,7 +35,7 @@ public class FrontEndButton implements Writable {
 				break;
 			case FUNCTIONS:
 				aLines.add("\t\t\t\t\t<a className=\"pure-button topnav-button\"");
-				if (aType != Types.ANALYSIS) {
+				if (aPanel) {
 					aLines.add("\t\t\t\t\t\tonClick={" + aAction.getName() + ".openPanel}>");
 					aLines.add("\t\t\t\t\t" + FormatingTools.namifyArg(aName));
 				} else {
@@ -43,6 +43,8 @@ public class FrontEndButton implements Writable {
 					aLines.add("\t\t\t\t\t\tRun " + aName);
 				}
 		        aLines.add("\t\t\t\t\t</a>");
+				break;
+			default:
 				break;
 		}
 		return aLines.toArray(new String[aLines.size()]);
