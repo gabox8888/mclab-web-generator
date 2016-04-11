@@ -12,7 +12,7 @@ public class CompileConfigFile {
 	private String aLanguage;
 	
 	public CompileConfigFile(String pArg, String pLanguage) {
-		aName = FormatingTools.namifyArg(pArg).toUpperCase().replace(" ", "_");
+		aName = FormatingTools.parseByCamelCase(pArg).replaceFirst(".$","");
 		aArg = pArg;
 		aLanguage = pLanguage;
 	}
@@ -30,13 +30,13 @@ public class CompileConfigFile {
 	public String[] declareDispatch() {
 		List<String> aLines = new ArrayList<String>();
 
-		aLines.add("case AT." + aLanguage + "_COMPILE_PANEL.OPEN" + aName + "_SELECTION_MODE:");
+		aLines.add("case AT." + aLanguage + "_COMPILE_PANEL.OPEN_" + aName + "_SELECTION_MODE:");
 		aLines.add("\tthis._" + aArg + "SelectMode = true;");
 		aLines.add("\tbreak;");
-		aLines.add("case AT." + aLanguage + "_COMPILE_PANEL.CLOSE" + aName + "_SELECTION_MODE:");
+		aLines.add("case AT." + aLanguage + "_COMPILE_PANEL.CLOSE_" + aName + "_SELECTION_MODE:");
 		aLines.add("\tthis._" + aArg + "SelectMode = false;");
 		aLines.add("\tbreak;");
-		aLines.add("case AT." + aLanguage + "_COMPILE_PANEL.CONFIRM" + aName + ":");
+		aLines.add("case AT." + aLanguage + "_COMPILE_PANEL.CONFIRM_" + aName + ":");
 		aLines.add("\tif (this._" + aArg  + "SelectMode) {");
 		aLines.add("\t\tthis._" + aArg + "Path = this._unconfirmed" + FormatingTools.capitalizeName(aArg) + "Path;");
 		aLines.add("\t\tthis._unconfirmed" + FormatingTools.capitalizeName(aArg) + "Path = null;");

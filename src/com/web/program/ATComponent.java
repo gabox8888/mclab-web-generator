@@ -13,13 +13,14 @@ public class ATComponent implements Writable {
 	private Command aCommand;
 	
 	public ATComponent (String pName, Types pType,Command pCommand) {
-		aName = FormatingTools.parseByCamelCase(pName).replaceFirst(".$","");
+		aName = pName;
+		System.out.println(aName);
 		aType = pType;
 		aCommand = pCommand;
 	}
 	
 	private String generateName(String pName) {
-		return pName.toUpperCase().replace(" ", "_");
+		return FormatingTools.parseByCamelCase(pName).replaceFirst(".$","");
 	}
 
 	@Override

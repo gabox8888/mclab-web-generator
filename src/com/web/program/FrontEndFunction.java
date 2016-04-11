@@ -158,10 +158,11 @@ public class FrontEndFunction implements Function {
 		switch (aType) {
 			case ANALYSIS: 
 				aLines.add("\t\t\tconst stdout = JSON.parse(res.text);");
+				aLines.add("\t\t\tconst prettyPrint = JSON.stringify(stdout,null,\"\\t\");");
 				aLines.add("\t\t\tTerminalActions.println(");
 				aLines.add("\t\t\t\t<div>Analysis complete! {' '}</div>");
 				aLines.add("\t\t\t);");				
-				aLines.add("\t\t\tTerminalActions.println(stdout);");
+				aLines.add("\t\t\tTerminalActions.println(prettyPrint);");
 				break;
 			default:
 				aLines.add("\t\t\tconst package_path = JSON.parse(res.text)['package_path'];");

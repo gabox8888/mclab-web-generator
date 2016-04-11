@@ -16,7 +16,7 @@ public class Command {
 		
 	public Command(String pPath) {
 		aPath = pPath;
-		aParsedPath = new ArrayList<String>(Arrays.asList(aPath.split(" ")));
+		aParsedPath = new ArrayList<String>(Arrays.asList(normalize(aPath).split(" ")));
 		aArgs = new ArrayList<String>();
 		aFile = new ArrayList<String>();
 				
@@ -32,8 +32,7 @@ public class Command {
 			aStrBuilder.append(s + " ");
 		}
 		
-		
-		return aStrBuilder.toString();
+		return unnormalize(aStrBuilder.toString());
 	}
 	
 	private void findArgs() {
@@ -66,6 +65,17 @@ public class Command {
 	
 	public String[] getArgsParams () { 
 		return aArgs.toArray(new String[aArgs.size()]);
+	}
+	
+	private String normalize(String pCommand) {
+		return pCommand.replaceAll("[&]|[*]|[']", " $0 ");
+	}
+	
+	private String unnormalize(String pCommand) {
+		String temp1 = pCommand.replaceAll(" & ", "&");
+		String temp2 = temp1.replaceAll(" \\* ", "*");
+		String temp3 = temp2.replaceAll(" ' ", "'");
+		return temp3;
 	}
 	
 }

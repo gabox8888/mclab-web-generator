@@ -24,7 +24,7 @@ public class BusinessFunction implements Function {
 	 */
 	public BusinessFunction(String pName, Types pType, Command pCommand) {
 		
-		aName = "apply" + FormatingTools.getNickname(pName);
+		aName =  pName;
 		aType = pType;
 		aCommand = pCommand;
 		aParamsVar = new ArrayList<Params>();
@@ -38,7 +38,7 @@ public class BusinessFunction implements Function {
 	
 	public BusinessFunction(String pName, Types pType, Command pCommand,Language pLanguage) {
 		
-		aName = "apply" + FormatingTools.getNickname(pName);
+		aName =  pName;
 		aType = pType;
 		aCommand = pCommand;
 		aParamsVar = new ArrayList<Params>();
@@ -52,7 +52,7 @@ public class BusinessFunction implements Function {
 	
 	public BusinessFunction(String pName, Types pType, Command pCommand, Function pFunction) {
 		
-		aName = "apply" + FormatingTools.getNickname(pName);
+		aName =  pName;
 		aType = pType;
 		aCommand = pCommand;
 		aParamsVar = new ArrayList<Params>();
@@ -66,6 +66,12 @@ public class BusinessFunction implements Function {
 	private void initFunction() {
 		
 		aParams.add(new HeaderParams("SessionID"));
+		
+		if (FormatingTools.getNickname(aName) == null) {
+			aName = "apply" + aName;
+		} else {
+			aName = "apply" + FormatingTools.getNickname(aName);
+		}
 		
 		if (aType != Types.ANALYSIS) {
 			addParam(new UserFileParams("genRootPath", "genRoot"));
@@ -176,12 +182,12 @@ public class BusinessFunction implements Function {
 				aLines.add("\t\t\t\t\tconst toCopy = mainDir + '/*" + aLanguage.getExt() + "'; // pattern of files to copy");
 				aLines.add("\t\t\t\t\tchild_process.exec(`mv ${toCopy} ${"+ aLanguageDir + "}`,(err)=>{");
 				aLines.add("\t\t\t\t\t\tconst archiveUUID = sessions.createUUID();");
-				aLines.add("\t\t\t\t\t\tconst archiveName = '" + FormatingTools.uncapitalizeName(aLanguage.getName()) + "-package-${archiveUUID}';");
+				aLines.add("\t\t\t\t\t\tconst archiveName = `" + FormatingTools.uncapitalizeName(aLanguage.getName()) + "-package-${archiveUUID}`;");
 				aLines.add("\t\t\t\t\t\tconst archivePath = path.join(genRootPath, archiveName + '.zip');");
 				aLines.add("\t\t\t\t\t\tconst relPathToArchive = path.relative(genRootPath, archivePath);");
 				aLines.add("\t\t\t\t\t\tconst package_path = `files/download/${relPathToArchive}`;");
 				aLines.add("\t\t\t\t\t\t// Zip the files and return the path to the zip file (relative to /session, since this is the API call to be made)");
-				aLines.add("\t\t\t\t\t\tchild_process.exec(`zip -j ${archivePath} ${" + aLanguageDir + "}/" + aLanguage.getExt() + "`, (err)=>{");
+				aLines.add("\t\t\t\t\t\tchild_process.exec(`zip -j ${archivePath} ${" + aLanguageDir + "}/*" + aLanguage.getExt() + "`, (err)=>{");
 				aLines.add("\t\t\t\t\t\t\tcb(null,{package_path: package_path});");
 				aLines.add("\t\t\t\t\t\t});");
 				aLines.add("\t\t\t\t\t});");

@@ -2,8 +2,6 @@ package com.web.program;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.web.tools.FormatingTools;
-
 
 public class OpenPanelFunction implements Function {
 	
@@ -12,7 +10,7 @@ public class OpenPanelFunction implements Function {
 	
 	public OpenPanelFunction(String pLanguage) {
 		aName = "openPanel";
-		aLanguage = FormatingTools.parseByCamelCase(pLanguage).replaceFirst(".$","");
+		aLanguage = pLanguage;
 	}
 
 	@Override
